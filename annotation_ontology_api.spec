@@ -24,7 +24,7 @@ module annotation_ontology_api {
 		string input_workspace;
 		list<string> query_events;
 		list<string> query_genes;
-		bool standardize_modelseed_ids;
+		int standardize_modelseed_ids;
     } GetAnnotationOntologyEventsParams;
     
     typedef structure {
