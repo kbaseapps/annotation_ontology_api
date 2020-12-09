@@ -5,7 +5,7 @@ import requests
 from pprint import pformat
 from annotation_ontology_api.annotation_ontology_api import AnnotationOntologyAPI
 from Workspace.WorkspaceClient import Workspace as workspaceService
-from installed_clients.DataFileUtilClient import DataFileUtil
+from DataFileUtil.DataFileUtilClient import DataFileUtil
 # silence whining
 import requests
 requests.packages.urllib3.disable_warnings()

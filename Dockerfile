@@ -12,10 +12,10 @@ MAINTAINER KBase Developer
 # https library that is out of date in the base image.
 
 RUN pip install coverage
+RUN pip install ConfigParser
 
 # update security libraries in the base image
 RUN pip install cffi --upgrade \
-	&& pip install ConfigParser \
     && pip install pyopenssl --upgrade \
     && pip install ndg-httpsclient --upgrade \
     && pip install pyasn1 --upgrade \
