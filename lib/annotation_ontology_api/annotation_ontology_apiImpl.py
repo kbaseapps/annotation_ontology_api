@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
+import os
+import requests
+from pprint import pformat
+from annotation_ontology_api.annotation_ontology_api import AnnotationOntologyAPI
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+from installed_clients.DataFileUtilClient import DataFileUtil
+# silence whining
+import requests
+requests.packages.urllib3.disable_warnings()
 #END_HEADER
 
 
@@ -29,6 +38,11 @@ class annotation_ontology_api:
     # be found
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
+        self.config = config
+        self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
+        self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
+        self.ws_client = workspaceService(config["workspace-url"])
+        self.dfu_client = DataFileUtil(self.config['SDK_CALLBACK_URL'])
         #END_CONSTRUCTOR
         pass
 
@@ -54,6 +68,10 @@ class annotation_ontology_api:
         # ctx is the context object
         # return variables are: output
         #BEGIN get_annotation_ontology_events
+        self.config['ctx'] = ctx
+        print(("Input parameters: " + pformat(params)))
+        anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
+        output = anno_api.get_annotation_ontology_events(params)
         #END get_annotation_ontology_events
 
         # At some point might do deeper type checking...
@@ -84,6 +102,10 @@ class annotation_ontology_api:
         # ctx is the context object
         # return variables are: output
         #BEGIN add_annotation_ontology_events
+        self.config['ctx'] = ctx
+        print(("Input parameters: " + pformat(params)))
+        anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
+        output = anno_api.add_annotation_ontology_events(params)
         #END add_annotation_ontology_events
 
         # At some point might do deeper type checking...
