@@ -19,7 +19,6 @@ module annotation_ontology_api {
 		mapping<string gene_id,list<AnnotationOntologyTerm> terms> ontology_terms;
 	} AnnotationOntologyEvent;
     
-    #Need to handle translation of obsolete ModelSEED rxn IDs both from translations or when the ontology fed in is an ModelSEED rxn ID    
     typedef structure {
 		string input_ref;
 		string input_workspace;
