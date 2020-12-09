@@ -5,14 +5,14 @@ A KBase module: annotation_ontology_api
 module annotation_ontology_api {
     typedef structure {
     	string term;
-    	list<string> modelseed_ids;#Ignored on input - set automatically on output
-    	string evidence;#Optional
+    	list<string> modelseed_ids;
+    	string evidence;
     } AnnotationOntologyTerm;
     
     typedef structure {
-		string event_id;#On input - this is always method:ontology_id:timestamp
-		string description;#Keep description if provided but enforce uniqueness using timestamp
-		string ontology_id;#Replacing current "id" field
+		string event_id;
+		string description;
+		string ontology_id;
 		string method;
 		string method_version;
 		string timestamp;
