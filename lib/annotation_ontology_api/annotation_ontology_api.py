@@ -70,13 +70,13 @@ class AnnotationOntologyAPI:
     
     def get_alias_hash(self,namespace):
         if "MSRXN" not in self.alias_hash:
-            filename = self.config["data directory"]+"/msrxn_hash.json"
+            filename = self.config["data_directory"]+"/msrxn_hash.json"
             with open(filename) as json_file:
                 self.alias_hash["MSRXN"] = json.load(json_file)
         if namespace not in self.alias_hash:
             self.alias_hash[namespace] = {}
             if namespace == "EC":
-                filename = self.config["data directory"]+"/EC_translation.tsv"
+                filename = self.config["data_directory"]+"/EC_translation.tsv"
                 data = ""
                 with open(filename, 'r') as file:
                     data = file.read()
@@ -92,7 +92,7 @@ class AnnotationOntologyAPI:
                             self.alias_hash["EC"]["EC:"+items[1]] = []
                         self.alias_hash["EC"]["EC:"+items[1]].append(modelseed)
             elif namespace == "META" or namespace == "RO" or namespace == "BIGG" or namespace == "RHEA":
-                filename = self.config["data directory"]+"/ModelSEED_Reaction_Aliases.txt"
+                filename = self.config["data_directory"]+"/ModelSEED_Reaction_Aliases.txt"
                 data = ""
                 with open(filename, 'r') as file:
                     data = file.read()
@@ -113,7 +113,7 @@ class AnnotationOntologyAPI:
                                 self.alias_hash[source][source+":"+items[1]] = []
                             self.alias_hash[source][source+":"+items[1]].append(modelseed)
             elif namespace == "KO":
-                filename = self.config["data directory"]+"/kegg_95_0_ko_seed.tsv"
+                filename = self.config["data_directory"]+"/kegg_95_0_ko_seed.tsv"
                 data = ""
                 with open(filename, 'r') as file:
                     data = file.read()
@@ -135,7 +135,7 @@ class AnnotationOntologyAPI:
                             id_hash[modelseed] = 1
             elif namespace == "SSO":
                 sso_template = dict()
-                filename = self.config["data directory"]+"/SSO_reactions.json"
+                filename = self.config["data_directory"]+"/SSO_reactions.json"
                 with open(filename) as json_file:
                     sso_template = json.load(json_file)
                 for sso in sso_template:
@@ -151,7 +151,7 @@ class AnnotationOntologyAPI:
                             id_hash[modelseed] = 1             
             elif namespace == "GO":
                 go_translation = dict()
-                filename = self.config["data directory"]+"/GO_ontology_translation.json"
+                filename = self.config["data_directory"]+"/GO_ontology_translation.json"
                 with open(filename) as json_file:
                     go_translation = json.load(json_file)
                 for term in go_translation["translation"]:
