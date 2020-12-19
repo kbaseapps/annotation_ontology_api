@@ -39,11 +39,13 @@ class annotation_ontology_api:
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
         self.config = config
+        self.ws_client = None
+        self.dfu_client = None
         if 'SDK_CALLBACK_URL' in os.environ:
             self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
             self.dfu_client = DataFileUtil(self.config['SDK_CALLBACK_URL'])
-        self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
-        self.ws_client = workspaceService(config["workspace-url"])
+            self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
+            self.ws_client = workspaceService(config["workspace-url"])
         #END_CONSTRUCTOR
         pass
 
@@ -71,7 +73,11 @@ class annotation_ontology_api:
         #BEGIN get_annotation_ontology_events
         self.config['ctx'] = ctx
         print(("Input parameters: " + pformat(params)))
-        anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
+        anno_api = None
+        if self.ws_client == None:
+            anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
+        else:
+            anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
         output = anno_api.get_annotation_ontology_events(params)
         #END get_annotation_ontology_events
 
@@ -105,7 +111,11 @@ class annotation_ontology_api:
         #BEGIN add_annotation_ontology_events
         self.config['ctx'] = ctx
         print(("Input parameters: " + pformat(params)))
-        anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
+        anno_api = None
+        if self.ws_client == None:
+            anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
+        else:
+            anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
         output = anno_api.add_annotation_ontology_events(params)
         #END add_annotation_ontology_events
 
