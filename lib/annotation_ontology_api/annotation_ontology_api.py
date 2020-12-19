@@ -362,7 +362,7 @@ class AnnotationOntologyAPI:
                 }]
             }
             save_output = self.ws_client.save_objects(ws_params)
-            return {"output_ref" : save_output[2]}
+            return {"output_ref" : save_output[0][2]}
         else:
             return {
                 "object" : params["object"],
