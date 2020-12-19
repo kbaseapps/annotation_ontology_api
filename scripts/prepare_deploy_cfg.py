@@ -2,7 +2,7 @@ import sys
 import os
 import os.path
 from jinja2 import Template
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import StringIO
 
 if __name__ == "__main__":
