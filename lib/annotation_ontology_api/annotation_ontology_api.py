@@ -351,7 +351,8 @@ class AnnotationOntologyAPI:
                 'service': 'annotation_ontology_api',
                 'service_ver': 1,
             }]
-            params = {
+            params["object"].pop('genbank_handle_ref', None)
+            ws_params = {
                 'workspace': params["output_workspace"],
                 'objects': [{
                     'data': params["object"],
@@ -360,8 +361,7 @@ class AnnotationOntologyAPI:
                     'provenance': provenance
                 }]
             }
-            params["object"].pop('genbank_handle_ref', None)
-            save_output = self.ws_client.save_objects(params)
+            save_output = self.ws_client.save_objects(ws_params)
             return {"output_ref" : save_output[2]}
         else:
             return {
