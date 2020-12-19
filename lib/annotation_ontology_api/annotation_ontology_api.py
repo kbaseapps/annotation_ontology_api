@@ -360,6 +360,7 @@ class AnnotationOntologyAPI:
                     'provenance': provenance
                 }]
             }
+            params["object"].pop('genbank_handle_ref', None)
             save_output = self.ws_client.save_objects(params)
             return {"output_ref" : save_output[2]}
         else:
