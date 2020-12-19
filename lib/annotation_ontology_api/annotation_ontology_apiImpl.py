@@ -39,10 +39,11 @@ class annotation_ontology_api:
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
         self.config = config
-        self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
+        if 'SDK_CALLBACK_URL' in os.environ:
+            self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
+            self.dfu_client = DataFileUtil(self.config['SDK_CALLBACK_URL'])
         self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
         self.ws_client = workspaceService(config["workspace-url"])
-        self.dfu_client = DataFileUtil(self.config['SDK_CALLBACK_URL'])
         #END_CONSTRUCTOR
         pass
 
