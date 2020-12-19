@@ -341,10 +341,10 @@ class AnnotationOntologyAPI:
             #Setting provenance
             provenance_params = {}
             for key in params:
-                if not key == "object":
-                    provenance_params[key] = params[keys]
+                if not key == "object" and not key == "events":
+                    provenance_params[key] = params[key]            
             provenance = [{
-                'description': 'COBRA KBase API',
+                'description': 'A function that adds ontology terms to a genome or metagenome',
                 'input_ws_objects': [],
                 'method': 'add_annotation_ontology_events',
                 'method_params': [provenance_params],
