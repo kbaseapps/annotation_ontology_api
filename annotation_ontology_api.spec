@@ -16,6 +16,7 @@ module annotation_ontology_api {
 		string method;
 		string method_version;
 		string timestamp;
+		mapping<string gene_id,string type> feature_types;
 		mapping<string gene_id,list<AnnotationOntologyTerm> terms> ontology_terms;
 	} AnnotationOntologyEvent;
     
@@ -41,6 +42,8 @@ module annotation_ontology_api {
 		string input_workspace;
 		string output_name;
 		string output_workspace;
+		int clear_existing;
+		int overwrite_matching;
 		list<AnnotationOntologyEvent> events;
     } AddAnnotationOntologyEventsParams;
     

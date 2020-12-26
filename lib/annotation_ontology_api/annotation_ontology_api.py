@@ -43,6 +43,7 @@ class AnnotationOntologyAPI:
         self.ws_client = ws_client
         self.dfu_client = dfu_client
         self.alias_hash = {}
+        self.term_names = {}
         self.config = config
     
     def process_workspace_identifiers(self,id_or_ref, workspace=None):
@@ -198,8 +199,23 @@ class AnnotationOntologyAPI:
             params["type"] = res["data"][0]["info"][2]
         #Get the feature data
         features = []
+        types = {}
         if "features" in params["object"]:
-            features = params["object"]["features"]
+            features.extend(params["object"]["features"])
+            for ftr in params["object"]["features"]:
+                types[ftr["id"]] = "gene"
+        if "cdss" in params["object"]:
+            features.extend(params["object"]["cdss"])
+            for ftr in params["object"]["cdss"]:
+                types[ftr["id"]] = "cds"
+        if "mrnas" in params["object"]:
+            features.extend(params["object"]["mrnas"])
+            for ftr in params["object"]["mrnas"]:
+                types[ftr["id"]] = "mrna"
+        if "non_coding_features" in params["object"]:
+            features.extend(params["object"]["non_coding_features"])
+            for ftr in params["object"]["non_coding_features"]:
+                types[ftr["id"]] = "noncoding"
         elif "features_handle_ref" in params["object"]:
             shock_output = self.dfu_client.shock_to_file({
                 "handle_id" : params["object"]["features_handle_ref"],
@@ -209,7 +225,9 @@ class AnnotationOntologyAPI:
             shock_output["file_path"] = shock_output["file_path"][0:-3]
             with open(shock_output["file_path"]) as json_file:
                 features = json.load(json_file)
-        output = {"events" : []}
+            for ftr in features:
+                types[ftr["id"]] = "gene"
+        output = {"events" : [],"feature_types" : {}}
         if "ontology_events" in params["object"]:
             events_array = []
             for event in params["object"]["ontology_events"]:
@@ -256,6 +274,7 @@ class AnnotationOntologyAPI:
                                     modelseed_ids = self.translate_term_to_modelseed(term)
                                     for event_index in feature["ontology_terms"][original_tag][original_term]:
                                         if feature["id"] not in events_array[event_index]["ontology_terms"]:
+                                            output["feature_types"][feature["id"]] = types[feature["id"]]
                                             events_array[event_index]["ontology_terms"][feature["id"]] = []
                                         termdata = {"term" : term}
                                         if len(modelseed_ids) > 0:
@@ -273,37 +292,73 @@ class AnnotationOntologyAPI:
             res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
             params["object"] = res["data"][0]["data"]
             params["type"] = res["data"][0]["info"][2]
-        #Adding ontology
-        features = []
-        if "features" in params["object"]:
-            features = params["object"]["features"]
-        elif "features_handle_ref" in params["object"]:
-            shock_output = self.dfu_client.shock_to_file({
-                "handle_id" : params["object"]["features_handle_ref"],
-                "file_path" : self.scratch_path
-            })
-            os.system("gunzip --force ".shock_output["file_path"])
-            shock_output["file_path"] = shock_output["file_path"][0:-3]
-            with open(shock_output["file_path"]) as json_file:
-                features = json.load(json_file)
-        feature_hash = {}
-        for feature in features:
-           feature_hash[feature["id"]] = feature
+        output = {
+            "ftrs_not_found" : [],"ftrs_found" : 0
+        }
+        #Pulling existing ontology so we can standardize and check for matches
+        ontologies_present = {}
+        events = self.get_annotation_ontology_events(params)["events"]
+        if "clear_existing" in params and params["clear_existing"] == 1: 
+            events = []
+        #Scrolling through new events, stadardizing, and checking for matches
         for event in params["events"]:
+            if "ontology_id" not in event:
+                event["ontology_id"] = event["id"]
             event["ontology_id"] = event["ontology_id"].upper()
             if event["ontology_id"] in ontology_translation:
                 event["ontology_id"] = ontology_translation[event["ontology_id"]]
+            event["id"] = event["ontology_id"]
             #Creating description
             if "event_id" not in event:
-                event["event_id"] = event["method"]+":"+event["method_version"]+":"+event["ontology_id"]+":"+event["timestamp"]
+                event["event_id"] = event["method"]+":"+event["ontology_id"]+":"+event["timestamp"]
             if "description" not in event:
                 event["description"] = event["method"]+":"+event["method_version"]+":"+event["ontology_id"]+":"+event["timestamp"]
             elif event["description"].split(":").pop() != event["timestamp"]:
                 event["description"] = event["description"]+":"+event["timestamp"]
+            index = 0
+            match = 0
+            for existing_event in events:
+                #If an existing event has a matching event ID, we overwrite it
+                if existing_event["event_id"] == event["event_id"]:
+                    match = 1
+                    if "overwrite_matching" in params and params["overwrite_matching"] == 1:
+                        events[index] = event
+                index += 1
+            if match == 0:
+                events.append(event)
+        #Filling feature hash with all feature types which should all have unique ids
+        feature_hash = {}
+        if "features" in params["object"]:
+            for ftr in params["object"]["features"]:
+                feature_hash[ftr["id"]] = ftr
+        if "cdss" in params["object"]:
+            for ftr in params["object"]["cdss"]:
+                feature_hash[ftr["id"]] = ftr
+        if "mrnas" in params["object"]:
+            for ftr in params["object"]["mrnas"]:
+                feature_hash[ftr["id"]] = ftr
+        if "non_coding_features" in params["object"]:
+            for ftr in params["object"]["non_coding_features"]:
+                feature_hash[ftr["id"]] = ftr
+        if "features_handle_ref" in params["object"]:
+            if "feature_object" not in params:
+                shock_output = self.dfu_client.shock_to_file({
+                    "handle_id" : params["object"]["features_handle_ref"],
+                    "file_path" : self.scratch_path
+                })
+                os.system("gunzip --force ".shock_output["file_path"])
+                shock_output["file_path"] = shock_output["file_path"][0:-3]
+                with open(shock_output["file_path"]) as json_file:
+                    params["feature_object"] = json.load(json_file)
+        if "feature_object" in params:
+            for ftr in params["feature_object"]:
+                feature_hash[ftr["id"]] = ftr
+        #Adding events
+        for event in events:
             new_event = {
                 "description" : event["description"],
                 "id" : event["ontology_id"],
-                "event_id" : event["method"]+":"+event["ontology_id"]+":"+event["timestamp"],
+                "event_id" : event["event_id"],
                 "ontology_id" : event["ontology_id"],
                 "method" : event["method"],
                 "method_version" : event["method_version"],
@@ -311,14 +366,11 @@ class AnnotationOntologyAPI:
             }
             if "ontology_events" not in params["object"]:
                 params["object"]["ontology_events"] = []
-            for existing_event in params["object"]["ontology_events"]:
-                if new_event["description"] == existing_event["description"]:
-                    print("Event description already present in object")
-                    return {}
             event_index = len(params["object"]["ontology_events"])
             params["object"]["ontology_events"].append(new_event)
             for gene in event["ontology_terms"]:
                 if gene in feature_hash:
+                    output["ftrs_found"] += 1
                     feature = feature_hash[gene]
                     if "ontology_terms" not in feature:
                         feature["ontology_terms"] = {}
@@ -327,21 +379,32 @@ class AnnotationOntologyAPI:
                     for term in event["ontology_terms"][gene]:
                         if term["term"].split(":")[0] != new_event["id"]:
                             term["term"] = new_event["id"]+":"+term["term"]
+                        #If this is a SEED role, translate to an SSO
+                        if new_event["id"] == "SSO" and re.search('^\d+$', term["term"]) == None:
+                            term["term"] = self.translate_rast_function_to_sso(term["term"])
+                        if term["term"] == None:
+                            continue
                         if term["term"] not in feature["ontology_terms"][new_event["id"]]:
                             feature["ontology_terms"][new_event["id"]][term["term"]] = []
                         feature["ontology_terms"][new_event["id"]][term["term"]].append(event_index)
+                        if new_event["id"] not in ontologies_present:
+                            ontologies_present[new_event["id"]] = {}
+                        ontologies_present[new_event["id"]][term["term"]] = self.get_term_name(new_event["id"],term["term"])
                         if "evidence" in term:
                             if "ontology_evidence" not in feature:
                                 feature["ontology_evidence"] = {}
                             if term["term"] not in feature["ontology_evidence"]:
                                 feature["ontology_evidence"][term["term"]] = {}
                             feature["ontology_evidence"][term["term"]][event_index] = term["evidence"]
-        #Saving object
+                else:
+                    output["ftrs_not_found"].append(gene)
+        params["object"]["ontologies_present"] = ontologies_present
+        #Saving object if requested but not if it's an AMA
         if params["save"] == 1:
             #Setting provenance
             provenance_params = {}
             for key in params:
-                if not key == "object" and not key == "events":
+                if not key == "object" and not key == "events" and not "feature_object":
                     provenance_params[key] = params[key]            
             provenance = [{
                 'description': 'A function that adds ontology terms to a genome or metagenome',
@@ -351,7 +414,21 @@ class AnnotationOntologyAPI:
                 'service': 'annotation_ontology_api',
                 'service_ver': 1,
             }]
+            #If a metagenome, saving features
+            if "feature_object" in params:
+                json_file_path = self.config["scratch"]+params["object"]["name"]+"_features.json"
+                with open(json_file_path, 'w') as fid:
+                    json.dump(params["feature_object"], fid)
+                json_to_shock = self.dfu_client.file_to_shock(
+                    {'file_path': json_file_path, 'make_handle': 1, 'pack': 'gzip'}
+                )
+                # Resetting feature file handle o new value
+                params["object"]['features_handle_ref'] = json_to_shock['handle']['hid']
+                # Remove json file to avoid disk overload
+                os.remove(json_file_path)
+            # Removing genbank handle ref because this breaks saving
             params["object"].pop('genbank_handle_ref', None)
+            # Saving genome/metagenome object to workspace
             ws_params = {
                 'workspace': params["output_workspace"],
                 'objects': [{
@@ -362,9 +439,53 @@ class AnnotationOntologyAPI:
                 }]
             }
             save_output = self.ws_client.save_objects(ws_params)
-            return {"output_ref" : save_output[0][2]}
+            output["output_ref"] = save_output[0][2]
         else:
-            return {
-                "object" : params["object"],
-                "type" : params["type"]
-            }
+            #Returning object if save not requested
+            output["object"] = params["object"]
+            output["type"] = params["type"]
+            if "feature_object" in params:
+                output["feature_object"] = params["feature_object"]
+        return output
+    
+    def convert_role_to_searchrole(self,term):
+        term = term.lower()
+        term = re.sub("\s","",term)
+        term = re.sub("[\d\-]+\.[\d\-]+\.[\d\-]+\.[\d\-]*","",term)
+        term = re.sub("\#.*$","",term)
+        term = re.sub("\(ec:*\)","",term)
+        term = re.sub("[\(\)\[\],-]","",term)
+        return term
+    
+    def translate_rast_function_to_sso(self,term):
+        #Stripping out SSO prefix if it's present
+        term = re.sub("^SSO:","",term)
+        term = self.convert_role_to_searchrole(term)
+        #Checking for SSO translation file
+        if "SEED_ROLE" not in self.alias_hash:
+            self.alias_hash["SEED_ROLE"] = {}
+            sso_ontology = dict()
+            with open(self.config["data_directory"]+"/SSO_dictionary.json") as json_file:
+                sso_ontology = json.load(json_file)
+            for term in sso_ontology["term_hash"]:
+                name = self.convert_role_to_searchrole(sso_ontology["term_hash"][term]["name"])
+                self.alias_hash["SEED_ROLE"][name] = term
+            
+        #Translating
+        if term in self.alias_hash["SEED_ROLE"]:
+            return self.alias_hash["SEED_ROLE"][term]
+        else:
+            return None
+    
+    def get_term_name(self,type,term):
+        if type not in self.term_names:
+            self.term_names[type] = {}
+            if type == "SSO" or type == "EC" or type == "TC" or type == "META" or type == "RO" or type == "KO" or type == "GO":
+                with open(self.config["data_directory"]+"/"+type+"_dictionary.json") as json_file:
+                    ontology = json.load(json_file)
+                    for term in ontology["term_hash"]:
+                        self.term_names[type][term] = ontology["term_hash"][term]["name"]
+        if term not in self.term_names[type]:
+            return "Unknown"
+        return self.term_names[type][term]
+        
