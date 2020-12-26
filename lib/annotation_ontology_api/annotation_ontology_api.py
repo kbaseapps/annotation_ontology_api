@@ -219,7 +219,7 @@ class AnnotationOntologyAPI:
         elif "features_handle_ref" in params["object"]:
             shock_output = self.dfu_client.shock_to_file({
                 "handle_id" : params["object"]["features_handle_ref"],
-                "file_path" : self.scratch_path
+                "file_path" : self.config["scratch"]
             })
             os.system("gunzip --force ".shock_output["file_path"])
             shock_output["file_path"] = shock_output["file_path"][0:-3]
@@ -344,7 +344,7 @@ class AnnotationOntologyAPI:
             if "feature_object" not in params:
                 shock_output = self.dfu_client.shock_to_file({
                     "handle_id" : params["object"]["features_handle_ref"],
-                    "file_path" : self.scratch_path
+                    "file_path" : self.config["scratch"]
                 })
                 os.system("gunzip --force ".shock_output["file_path"])
                 shock_output["file_path"] = shock_output["file_path"][0:-3]
