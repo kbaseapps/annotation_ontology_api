@@ -381,7 +381,23 @@ class AnnotationOntologyAPI:
                             term["term"] = new_event["id"]+":"+term["term"]
                         #If this is a SEED role, translate to an SSO
                         if new_event["id"] == "SSO" and re.search('^\d+$', term["term"]) == None:
-                            term["term"] = self.translate_rast_function_to_sso(term["term"])
+                            terms = re.split("\s*;\s+|\s+[\@\/]\s+",term["term"])
+                            first = 1
+                            for subterm in terms:
+                                if first == 1:
+                                    #Only the first term completes the rest of this code
+                                    term["term"] = self.translate_rast_function_to_sso(subterm)
+                                    first = 0
+                                else:
+                                    #Sub sterms need to be added independently
+                                    subterm = self.translate_rast_function_to_sso(subterm)
+                                    if subterm != None:
+                                        if subterm not in feature["ontology_terms"][new_event["id"]]:
+                                            feature["ontology_terms"][new_event["id"]][subterm] = []
+                                        feature["ontology_terms"][new_event["id"]][subterm].append(event_index)
+                                        if new_event["id"] not in ontologies_present:
+                                            ontologies_present[new_event["id"]] = {}
+                                        ontologies_present[new_event["id"]][subterm] = self.get_term_name(new_event["id"],subterm)                        
                         if term["term"] == None:
                             continue
                         if term["term"] not in feature["ontology_terms"][new_event["id"]]:
