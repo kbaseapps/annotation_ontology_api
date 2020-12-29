@@ -380,7 +380,8 @@ class AnnotationOntologyAPI:
                         if term["term"].split(":")[0] != new_event["id"]:
                             term["term"] = new_event["id"]+":"+term["term"]
                         #If this is a SEED role, translate to an SSO
-                        if new_event["id"] == "SSO" and re.search('^\d+$', term["term"]) == None:
+                        if new_event["id"] == "SSO" and re.search('^SSO:\d+$', term["term"]) == None:
+                            term["term"] = re.sub("^SSO:","",term["term"])
                             terms = re.split("\s*;\s+|\s+[\@\/]\s+",term["term"])
                             first = 1
                             for subterm in terms:
