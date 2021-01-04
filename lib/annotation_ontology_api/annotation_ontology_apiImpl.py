@@ -75,7 +75,10 @@ class annotation_ontology_api:
         print(("Input parameters: " + pformat(params)))
         anno_api = None
         if self.ws_client == None:
-            anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
+            if "workspace-url" in params:
+                anno_api = AnnotationOntologyAPI(self.config,workspaceService(params['workspace-url'], token=ctx['token']),self.dfu_client)
+            else:
+                anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
         else:
             anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
         output = anno_api.get_annotation_ontology_events(params)
