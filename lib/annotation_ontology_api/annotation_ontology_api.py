@@ -193,7 +193,7 @@ class AnnotationOntologyAPI:
             for gene in params["query_genes"]:
                 gene_query[gene] = 1
         #Pull the object from the workspace is necessary
-        if "input_workspace" not in params["input_workspace"]:
+        if "input_workspace" not in params:
             params["input_workspace"] = None
         if "object" not in params:
             res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
