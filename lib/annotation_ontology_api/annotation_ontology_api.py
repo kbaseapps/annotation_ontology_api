@@ -233,20 +233,21 @@ class AnnotationOntologyAPI:
         if "ontology_events" in params["object"]:
             events_array = []
             for event in params["object"]["ontology_events"]:
-                id = None
-                if "description" in event:
-                    id = event["description"]
-                else: 
-                    id = event["method"]+":"+event["method_version"]+":"+event["id"]+":"+event["timestamp"]
+                if "event_id" not in event:
+                    event["event_id"] = event["method"]+":"+event["method_version"]+":"+event["id"]+":"+event["timestamp"]
+                if "description" not in event:
+                    event["description"] = event["method"]+":"+event["method_version"]+":"+event["id"]+":"+event["timestamp"]
+                elif event["description"].split(":").pop() != event["timestamp"]:
+                    event["description"] = event["description"]+":"+event["timestamp"]
                 newevent = {
-                    "event_id" : id,
-                    "ontology_id" : event["id"],
+                    "event_id" : event["event_id"],
+                    "description" : event["description"],
+                    "ontology_id" : event["id"].upper(),
                     "method" : event["method"],
                     "method_version" : event["method_version"],
                     "timestamp" : event["timestamp"],
                     "ontology_terms" : {}
                 }
-                newevent["ontology_id"] = newevent["ontology_id"].upper()
                 if newevent["ontology_id"] not in ontology_hash and newevent["ontology_id"] in ontology_translation:
                     newevent["ontology_id"] = ontology_translation[newevent["ontology_id"]]
                 events_array.append(newevent)
