@@ -267,12 +267,11 @@ class AnnotationOntologyAPI:
                                     if len(array) == 1:
                                         term = tag+":"+array[0]
                                     else:
-                                        if array[0] == original_tag or array[0] == original_tag.upper():
+                                        if array[0].upper() == original_tag.upper() or array[0].upper() == tag:
                                             array[0] = tag
                                             term = ":".join(array)
                                         else:
-                                            term = ":".join(array)
-                                            term = tag+":"+term
+                                            term = tag+":"+":".join(array)
                                     modelseed_ids = self.translate_term_to_modelseed(term)
                                     for event_index in feature["ontology_terms"][original_tag][original_term]:
                                         if feature["id"] not in events_array[event_index]["ontology_terms"]:
