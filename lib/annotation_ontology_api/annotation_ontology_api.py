@@ -438,7 +438,7 @@ class AnnotationOntologyAPI:
                             feature["ontology_terms"] = {}
                         if new_event["id"] not in feature["ontology_terms"]:
                             feature["ontology_terms"][new_event["id"]] = {}
-                        for term in event["ontology_terms"][gene]:
+                        for term in event["ontology_terms"][currgene]:
                             if term["term"].split(":")[0] != new_event["id"]:
                                 term["term"] = new_event["id"]+":"+term["term"]
                             #If this is a SEED role, translate to an SSO
