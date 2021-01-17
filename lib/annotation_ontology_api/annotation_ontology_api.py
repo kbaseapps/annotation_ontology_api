@@ -407,6 +407,7 @@ class AnnotationOntologyAPI:
                             alias_hash[alias[1]] = []
                         alias_hash[alias[1]].append(ftr["id"])
         #Adding events
+        params["object"]["ontology_events"] = []
         for event in events:
             new_event = {
                 "description" : event["description"],
