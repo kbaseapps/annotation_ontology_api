@@ -193,10 +193,12 @@ class AnnotationOntologyAPI:
             for gene in params["query_genes"]:
                 gene_query[gene] = 1
         #Pull the object from the workspace is necessary
-        if "input_workspace" not in params:
-            params["input_workspace"] = None
         if "object" not in params:
-            res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
+            res = None
+            if "input_workspace" not in params:
+                res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], None)]})
+            else: 
+                res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
             params["object"] = res["data"][0]["data"]
             params["type"] = res["data"][0]["info"][2]
         #Get the feature data
@@ -295,7 +297,10 @@ class AnnotationOntologyAPI:
     def add_annotation_ontology_events(self,params):
         #Pull the object from the workspace is necessary
         if "object" not in params or params["object"] == None:
-            res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
+            if "input_workspace" not in params:
+                res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], None)]})
+            else: 
+                res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
             params["object"] = res["data"][0]["data"]
             params["type"] = res["data"][0]["info"][2]
         output = {
@@ -522,6 +527,7 @@ class AnnotationOntologyAPI:
             }
             save_output = self.ws_client.save_objects(ws_params)
             output["output_ref"] = str(save_output[0][6])+"/"+str(save_output[0][0])+"/"+str(save_output[0][4])
+            output["output_name"] = str(save_output[0][1])
         else:            
             #Returning object if save not requested
             output["object"] = params["object"]
