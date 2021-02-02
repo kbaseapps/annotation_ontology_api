@@ -4,6 +4,7 @@ import re
 
 # silence whining
 import requests
+import hashlib
 requests.packages.urllib3.disable_warnings()
 
 source_hash = {
@@ -344,7 +345,7 @@ class AnnotationOntologyAPI:
         for currtype in feature_types:
             if currtype in params["object"]:
                 for ftr in params["object"][currtype]:
-                    self.upgrade_feature(ftr)
+                    self.upgrade_feature(ftr,currtype)
                     feature_hash[ftr["id"]] = ftr
                     self.process_feature_aliases(ftr,alias_hash)
         if "features_handle_ref" in params["object"]:
@@ -498,7 +499,7 @@ class AnnotationOntologyAPI:
                     alias_hash[alias[1]] = []
                     alias_hash[alias[1]].append(ftr["id"])
     
-    def upgrade_feature(self,ftr):
+    def upgrade_feature(self,ftr,type):
         if "function" in ftr:
             ftr["functions"] = re.split("\s*;\s+|\s+[\@\/]\s+",ftr["function"])
             del ftr["function"]
@@ -512,6 +513,8 @@ class AnnotationOntologyAPI:
                         ftr["aliases"][i] = array
                     else:
                         ftr["aliases"][i] = ["Unknown",ftr["aliases"][i]]
+        if type == "cdss" and "protein_md5" not in ftr:
+            ftr["protein_md5"] = hashlib.md5(ftr["protein_translation"].encode()).hexdigest()
         
     def convert_role_to_searchrole(self,term):
         term = term.lower()
