@@ -72,7 +72,7 @@ class annotation_ontology_api:
         # return variables are: output
         #BEGIN get_annotation_ontology_events
         self.config['ctx'] = ctx
-        print(("Input parameters: " + pformat(params)))
+        #print(("Input parameters: " + pformat(params)))
         anno_api = None
         if self.ws_client == None:
             if "workspace-url" in params:
@@ -113,7 +113,7 @@ class annotation_ontology_api:
         # return variables are: output
         #BEGIN add_annotation_ontology_events
         self.config['ctx'] = ctx
-        print(("Input parameters: " + pformat(params)))
+        #print(("Input parameters: " + pformat(params)))
         anno_api = None
         if self.ws_client == None:
             if "workspace-url" in params:

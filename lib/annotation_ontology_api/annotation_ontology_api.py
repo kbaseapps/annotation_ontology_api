@@ -344,6 +344,7 @@ class AnnotationOntologyAPI:
         for currtype in feature_types:
             if currtype in params["object"]:
                 for ftr in params["object"][currtype]:
+                    self.upgrade_feature(ftr)
                     feature_hash[ftr["id"]] = ftr
                     self.process_feature_aliases(ftr,alias_hash)
         if "features_handle_ref" in params["object"]:
@@ -447,7 +448,9 @@ class AnnotationOntologyAPI:
                 'service_ver': 1,
             }]
             #If a metagenome, saving features
+            params["type"] = "KBaseGenomes.Genome"
             if "feature_object" in params:
+                params["type"] = "KBaseMetagenomes.AnnotatedMetagenomeAssembly"
                 json_file_path = self.config["scratch"]+params["object"]["name"]+"_features.json"
                 with open(json_file_path, 'w') as fid:
                     json.dump(params["feature_object"], fid)
@@ -466,7 +469,7 @@ class AnnotationOntologyAPI:
                 'objects': [{
                     'data': params["object"],
                     'name': params["output_name"],
-                    'type': params["type"],
+                    'type': ,
                     'provenance': provenance
                 }]
             }
@@ -495,6 +498,21 @@ class AnnotationOntologyAPI:
                     alias_hash[alias[1]] = []
                     alias_hash[alias[1]].append(ftr["id"])
     
+    def upgrade_feature(self,ftr):
+        if "function" in ftr:
+            ftr["functions"] = re.split("\s*;\s+|\s+[\@\/]\s+",ftr["function"])
+            del ftr["function"]
+            #Clearing old ontology terms rather than attempting to translate them
+            ftr["ontology_terms"] = {}
+        if "aliases" in ftr:
+            for i in range(0, len(ftr["aliases"])):
+                if isinstance(ftr["aliases"][i], str):
+                    array = ftr["aliases"][i].split(":")
+                    if len(array) > 1:
+                        ftr["aliases"][i] = array
+                    else:
+                        ftr["aliases"][i] = ["Unknown",ftr["aliases"][i]]
+        
     def convert_role_to_searchrole(self,term):
         term = term.lower()
         term = re.sub("\s","",term)
