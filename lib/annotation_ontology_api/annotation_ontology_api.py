@@ -163,7 +163,7 @@ class AnnotationOntologyAPI:
                             modelseed = rxn_data["equiv_term"]
                             if modelseed in self.alias_hash["MSRXN"]:
                                 modelseed = self.alias_hash["MSRXN"][modelseed][0]
-                            if adjusted_term not in self.alias_hash["KO"]:
+                            if adjusted_term not in self.alias_hash["GO"]:
                                 self.alias_hash["GO"][adjusted_term] = []
                             if modelseed not in id_hash:
                                 self.alias_hash["GO"][adjusted_term].append(modelseed)
@@ -340,58 +340,12 @@ class AnnotationOntologyAPI:
         #Filling feature hash with all feature types which should all have unique ids
         alias_hash = {}
         feature_hash = {}
-        if "features" in params["object"]:
-            for ftr in params["object"]["features"]:
-                feature_hash[ftr["id"]] = ftr
-                if "aliases" in ftr:
-                    for alias in ftr["aliases"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-                if "db_xrefs" in ftr:
-                    for alias in ftr["db_xrefs"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-        if "cdss" in params["object"]:
-            for ftr in params["object"]["cdss"]:
-                feature_hash[ftr["id"]] = ftr
-                if "aliases" in ftr:
-                    for alias in ftr["aliases"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-                if "db_xrefs" in ftr:
-                    for alias in ftr["db_xrefs"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-        if "mrnas" in params["object"]:
-            for ftr in params["object"]["mrnas"]:
-                feature_hash[ftr["id"]] = ftr
-                if "aliases" in ftr:
-                    for alias in ftr["aliases"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-                if "db_xrefs" in ftr:
-                    for alias in ftr["db_xrefs"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-        if "non_coding_features" in params["object"]:
-            for ftr in params["object"]["non_coding_features"]:
-                feature_hash[ftr["id"]] = ftr
-                if "aliases" in ftr:
-                    for alias in ftr["aliases"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-                if "db_xrefs" in ftr:
-                    for alias in ftr["db_xrefs"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
+        feature_types = ["features","cdss","mrnas","non_coding_features"]
+        for currtype in feature_types:
+            if currtype in params["object"]:
+                for ftr in params["object"][currtype]:
+                    feature_hash[ftr["id"]] = ftr
+                    self.process_feature_aliases(ftr,alias_hash)
         if "features_handle_ref" in params["object"]:
             if "feature_object" not in params:
                 shock_output = self.dfu_client.shock_to_file({
@@ -405,16 +359,7 @@ class AnnotationOntologyAPI:
         if "feature_object" in params:
             for ftr in params["feature_object"]:
                 feature_hash[ftr["id"]] = ftr
-                if "aliases" in ftr:
-                    for alias in ftr["aliases"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
-                if "db_xrefs" in ftr:
-                    for alias in ftr["db_xrefs"]:
-                        if alias[1] not in alias_hash:
-                            alias_hash[alias[1]] = []
-                        alias_hash[alias[1]].append(ftr["id"])
+                self.process_feature_aliases(ftr,alias_hash)
         #Adding events
         params["object"]["ontology_events"] = []
         for event in events:
@@ -535,6 +480,20 @@ class AnnotationOntologyAPI:
             if "feature_object" in params:
                 output["feature_object"] = params["feature_object"]
         return output
+    
+    def process_feature_aliases(self,ftr,alias_hash):
+        if "aliases" in ftr:
+            for alias in ftr["aliases"]:    
+                if not isinstance(alias, str):
+                    alias = alias[1]
+                if alias not in alias_hash:
+                    alias_hash[alias] = []
+                alias_hash[alias].append(ftr["id"])
+        if "db_xrefs" in ftr:
+            for alias in ftr["db_xrefs"]:
+                if alias[1] not in alias_hash:
+                    alias_hash[alias[1]] = []
+                    alias_hash[alias[1]].append(ftr["id"])
     
     def convert_role_to_searchrole(self,term):
         term = term.lower()
