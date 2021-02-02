@@ -469,7 +469,7 @@ class AnnotationOntologyAPI:
                 'objects': [{
                     'data': params["object"],
                     'name': params["output_name"],
-                    'type': ,
+                    'type': params["type"],
                     'provenance': provenance
                 }]
             }
