@@ -344,10 +344,16 @@ class AnnotationOntologyAPI:
         feature_types = ["features","cdss","mrnas","non_coding_features"]
         for currtype in feature_types:
             if currtype in params["object"]:
-                for ftr in params["object"][currtype]:
-                    self.upgrade_feature(ftr,currtype)
-                    feature_hash[ftr["id"]] = ftr
-                    self.process_feature_aliases(ftr,alias_hash)
+                for ftr in params["object"][currtype]: 
+                    if currtype == "features" and "protein_translation" not in ftr:
+                        if "non_coding_features" not in params["object"]:
+                            params["object"]["non_coding_features"] = []
+                        params["object"]["non_coding_features"].append(ftr)
+                        params["object"][currtype].remove(ftr)
+                    else:
+                        self.upgrade_feature(ftr,currtype)
+                        feature_hash[ftr["id"]] = ftr
+                        self.process_feature_aliases(ftr,alias_hash)
         if "features_handle_ref" in params["object"]:
             if "feature_object" not in params:
                 shock_output = self.dfu_client.shock_to_file({
