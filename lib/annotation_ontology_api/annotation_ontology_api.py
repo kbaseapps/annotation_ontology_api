@@ -344,16 +344,19 @@ class AnnotationOntologyAPI:
         feature_types = ["features","cdss","mrnas","non_coding_features"]
         for currtype in feature_types:
             if currtype in params["object"]:
+                to_remove = []
                 for ftr in params["object"][currtype]: 
                     if currtype == "features" and "protein_translation" not in ftr:
                         if "non_coding_features" not in params["object"]:
                             params["object"]["non_coding_features"] = []
                         params["object"]["non_coding_features"].append(ftr)
-                        params["object"][currtype].remove(ftr)
+                        to_remove.append(ftr)
                     else:
                         self.upgrade_feature(ftr,currtype)
                         feature_hash[ftr["id"]] = ftr
                         self.process_feature_aliases(ftr,alias_hash)
+                for item in to_remove:
+                    params["object"][currtype].remove(item)
         if "features_handle_ref" in params["object"]:
             if "feature_object" not in params:
                 shock_output = self.dfu_client.shock_to_file({
@@ -470,6 +473,9 @@ class AnnotationOntologyAPI:
                 os.remove(json_file_path)
             # Removing genbank handle ref because this breaks saving
             params["object"].pop('genbank_handle_ref', None)
+            #Adding missing fields in genome
+            if params["type"] == "KBaseGenomes.Genome":
+                self.check_genome(params["object"])
             # Saving genome/metagenome object to workspace
             ws_params = {
                 'workspace': params["output_workspace"],
@@ -521,6 +527,24 @@ class AnnotationOntologyAPI:
                         ftr["aliases"][i] = ["Unknown",ftr["aliases"][i]]
         if type == "cdss" and "protein_md5" not in ftr:
             ftr["protein_md5"] = hashlib.md5(ftr["protein_translation"].encode()).hexdigest()
+        if type == "mrnas" and "dna_sequence_length" not in ftr:
+            ftr["dna_sequence_length"] = ftr["location"][0][3]
+    
+    def check_genome(self,genome):
+        if "md5" not in genome:
+            genome["md5"] = ""
+        if "molecule_type" not in genome:
+            genome["molecule_type"] = "DNA"
+        if "genome_tiers" not in genome:
+            genome["genome_tiers"] = ["ExternalDB","User"]
+        if "feature_counts" not in genome:
+            genome["feature_counts"] = {"CDS":0,"gene":0,"non-protein_encoding_gene":0}
+            if "cdss" in genome:
+                genome["feature_counts"]["CDS"] = len(genome["cdss"])
+            if "features" in genome:
+                genome["feature_counts"]["gene"] = len(genome["features"])
+            if "non_coding_features" in genome:
+                genome["feature_counts"]["non-protein_encoding_gene"] = len(genome["non_coding_features"])
         
     def convert_role_to_searchrole(self,term):
         term = term.lower()
