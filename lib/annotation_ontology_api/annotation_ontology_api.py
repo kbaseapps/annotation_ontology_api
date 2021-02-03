@@ -297,6 +297,7 @@ class AnnotationOntologyAPI:
     
     def add_annotation_ontology_events(self,params):
         #Pull the object from the workspace is necessary
+        ref = None
         if "object" not in params or params["object"] == None:
             if "input_workspace" not in params:
                 res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], None)]})
@@ -304,6 +305,7 @@ class AnnotationOntologyAPI:
                 res = self.ws_client.get_objects2({"objects": [self.process_workspace_identifiers(params["input_ref"], params["input_workspace"])]})
             params["object"] = res["data"][0]["data"]
             params["type"] = res["data"][0]["info"][2]
+            ref = str(res["data"][0]["info"][6])+"/"+str(res["data"][0]["info"][0])+"/"+str(res["data"][0]["info"][4])
         output = {
             "ftrs_not_found" : [],"ftrs_found" : 0
         }
@@ -475,7 +477,7 @@ class AnnotationOntologyAPI:
             params["object"].pop('genbank_handle_ref', None)
             #Adding missing fields in genome
             if params["type"] == "KBaseGenomes.Genome":
-                self.check_genome(params["object"])
+                self.check_genome(params["object"],ref)
             # Saving genome/metagenome object to workspace
             ws_params = {
                 'workspace': params["output_workspace"],
@@ -517,6 +519,10 @@ class AnnotationOntologyAPI:
             del ftr["function"]
             #Clearing old ontology terms rather than attempting to translate them
             ftr["ontology_terms"] = {}
+        if type == "features" and "cdss" not in ftr:
+            ftr["cdss"] = []
+        if "dna_sequence_length" not in ftr:
+            ftr["dna_sequence_length"] = ftr["location"][0][3]
         if "aliases" in ftr:
             for i in range(0, len(ftr["aliases"])):
                 if isinstance(ftr["aliases"][i], str):
@@ -527,10 +533,15 @@ class AnnotationOntologyAPI:
                         ftr["aliases"][i] = ["Unknown",ftr["aliases"][i]]
         if type == "cdss" and "protein_md5" not in ftr:
             ftr["protein_md5"] = hashlib.md5(ftr["protein_translation"].encode()).hexdigest()
-        if type == "mrnas" and "dna_sequence_length" not in ftr:
-            ftr["dna_sequence_length"] = ftr["location"][0][3]
-    
-    def check_genome(self,genome):
+        if "md5" not in ftr:
+            if "dna_sequence" in ftr:
+                ftr["md5"] = hashlib.md5(ftr["dna_sequence"].encode()).hexdigest()
+            elif "protein_translation" in ftr:
+                ftr["md5"] = hashlib.md5(ftr["protein_translation"].encode()).hexdigest()
+            else:
+                ftr["md5"] = ""
+        
+    def check_genome(self,genome,ref = None):
         if "md5" not in genome:
             genome["md5"] = ""
         if "molecule_type" not in genome:
@@ -545,6 +556,10 @@ class AnnotationOntologyAPI:
                 genome["feature_counts"]["gene"] = len(genome["features"])
             if "non_coding_features" in genome:
                 genome["feature_counts"]["non-protein_encoding_gene"] = len(genome["non_coding_features"])
+        if "cdss" not in genome:
+            genome["cdss"] = []
+        if not ref == None:
+            genome["assembly_ref"] = ref+";"+genome["assembly_ref"]
         
     def convert_role_to_searchrole(self,term):
         term = term.lower()
