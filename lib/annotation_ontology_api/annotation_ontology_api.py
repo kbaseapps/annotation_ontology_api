@@ -161,7 +161,7 @@ class AnnotationOntologyAPI:
                     if "equiv_terms" in go_translation["translation"][term]:
                         id_hash = {}
                         for rxn_data in go_translation["translation"][term]["equiv_terms"]:
-                            modelseed = "MSRXN:"+go_translation["translation"][term]["equiv_term"]
+                            modelseed = "MSRXN:"+rxn_data["equiv_term"]
                             if modelseed in self.alias_hash["MSRXN"]:
                                 modelseed = self.alias_hash["MSRXN"][modelseed][0]
                             if adjusted_term not in self.alias_hash["GO"]:
