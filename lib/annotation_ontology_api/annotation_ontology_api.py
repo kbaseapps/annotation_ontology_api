@@ -161,14 +161,15 @@ class AnnotationOntologyAPI:
                     if "equiv_terms" in go_translation["translation"][term]:
                         id_hash = {}
                         for rxn_data in go_translation["translation"][term]["equiv_terms"]:
-                            modelseed = "MSRXN:"+rxn_data["equiv_term"]
-                            if modelseed in self.alias_hash["MSRXN"]:
-                                modelseed = self.alias_hash["MSRXN"][modelseed][0]
-                            if adjusted_term not in self.alias_hash["GO"]:
-                                self.alias_hash["GO"][adjusted_term] = []
-                            if modelseed not in id_hash:
-                                self.alias_hash["GO"][adjusted_term].append(modelseed)
-                            id_hash[modelseed] = 1                   
+                            if rxn_data["equiv_term"] != None:
+                                modelseed = "MSRXN:"+rxn_data["equiv_term"]
+                                if modelseed in self.alias_hash["MSRXN"]:
+                                    modelseed = self.alias_hash["MSRXN"][modelseed][0]
+                                if adjusted_term not in self.alias_hash["GO"]:
+                                    self.alias_hash["GO"][adjusted_term] = []
+                                if modelseed not in id_hash:
+                                    self.alias_hash["GO"][adjusted_term].append(modelseed)
+                                id_hash[modelseed] = 1            
         return self.alias_hash[namespace]
                 
     def translate_term_to_modelseed(self,term):
@@ -281,10 +282,13 @@ class AnnotationOntologyAPI:
                                         else:
                                             term = tag+":"+":".join(array)
                                     modelseed_ids = self.translate_term_to_modelseed(term)
+                                    termhash = {}
                                     for event_index in feature["ontology_terms"][original_tag][original_term]:
                                         if feature["id"] not in events_array[event_index]["ontology_terms"]:
                                             output["feature_types"][feature["id"]] = types[feature["id"]]
                                             events_array[event_index]["ontology_terms"][feature["id"]] = []
+                                        termhash[term] = 1
+                                    for term in termhash:
                                         termdata = {"term" : term}
                                         if len(modelseed_ids) > 0:
                                             termdata["modelseed_ids"] = modelseed_ids
