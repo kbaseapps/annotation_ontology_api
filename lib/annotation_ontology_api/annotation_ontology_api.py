@@ -327,7 +327,7 @@ class AnnotationOntologyAPI:
                 event["event_id"] = event["method"]+":"+event["ontology_id"]+":"+event["timestamp"]
             if "description" not in event:
                 event["description"] = event["method"]+":"+event["method_version"]+":"+event["ontology_id"]+":"+event["timestamp"]
-            elif event["description"].split(":").pop() != event["timestamp"]:
+            elif event["description"][-1*len(event["timestamp"]):] != event["timestamp"]:
                 event["description"] = event["description"]+":"+event["timestamp"]
             index = 0
             match = 0
