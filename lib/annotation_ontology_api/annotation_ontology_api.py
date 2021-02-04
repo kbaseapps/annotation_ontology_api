@@ -146,11 +146,11 @@ class AnnotationOntologyAPI:
                         modelseed = "MSRXN:"+modelseed
                         if modelseed in self.alias_hash["MSRXN"]:
                             modelseed = self.alias_hash["MSRXN"][modelseed][0]
-                            if modelseed not in id_hash:
-                                if sso not in self.alias_hash["SSO"]:
-                                    self.alias_hash["SSO"][sso] = []
-                                self.alias_hash["SSO"][sso].append(modelseed)
-                            id_hash[modelseed] = 1             
+                        if modelseed not in id_hash:
+                            if sso not in self.alias_hash["SSO"]:
+                                self.alias_hash["SSO"][sso] = []
+                            self.alias_hash["SSO"][sso].append(modelseed)
+                        id_hash[modelseed] = 1             
             elif namespace == "GO":
                 go_translation = dict()
                 filename = self.config["data_directory"]+"/GO_ontology_translation.json"
@@ -161,7 +161,7 @@ class AnnotationOntologyAPI:
                     if "equiv_terms" in go_translation["translation"][term]:
                         id_hash = {}
                         for rxn_data in go_translation["translation"][term]["equiv_terms"]:
-                            modelseed = rxn_data["equiv_term"]
+                            modelseed = "MSRXN:"+rxn_data["equiv_term"]
                             if modelseed in self.alias_hash["MSRXN"]:
                                 modelseed = self.alias_hash["MSRXN"][modelseed][0]
                             if adjusted_term not in self.alias_hash["GO"]:
@@ -558,7 +558,7 @@ class AnnotationOntologyAPI:
                 genome["feature_counts"]["non-protein_encoding_gene"] = len(genome["non_coding_features"])
         if "cdss" not in genome:
             genome["cdss"] = []
-        if not ref == None:
+        if "assembly_ref" in genome and not ref == None:
             genome["assembly_ref"] = ref+";"+genome["assembly_ref"]
         
     def convert_role_to_searchrole(self,term):
