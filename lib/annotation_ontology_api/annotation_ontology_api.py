@@ -352,6 +352,7 @@ class AnnotationOntologyAPI:
             if currtype in params["object"]:
                 to_remove = []
                 for ftr in params["object"][currtype]: 
+                    ftr["ontology_terms"] = {}
                     if currtype == "features" and "protein_translation" not in ftr:
                         if "non_coding_features" not in params["object"]:
                             params["object"]["non_coding_features"] = []
