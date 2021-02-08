@@ -242,7 +242,7 @@ class AnnotationOntologyAPI:
                 old_description = None
                 if "description" in event:
                     old_description = event["description"]
-                    if event["description"].split(":").pop() != event["timestamp"]:
+                    if event["description"][-1*len(event["timestamp"]):] != event["timestamp"]:
                         event["description"] = event["description"]+":"+event["timestamp"]
                 else:
                     event["description"] = event["method"]+":"+event["method_version"]+":"+event["id"]+":"+event["timestamp"]
