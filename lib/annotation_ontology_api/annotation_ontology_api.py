@@ -287,16 +287,19 @@ class AnnotationOntologyAPI:
                                         if feature["id"] not in events_array[event_index]["ontology_terms"]:
                                             output["feature_types"][feature["id"]] = types[feature["id"]]
                                             events_array[event_index]["ontology_terms"][feature["id"]] = []
-                                        termhash[term] = 1
+                                        if term not in termhash:
+                                            termhash[term] = {}
+                                        termhash[term][event_index] = 1
                                     for term in termhash:
-                                        termdata = {"term" : term}
-                                        if len(modelseed_ids) > 0:
-                                            termdata["modelseed_ids"] = modelseed_ids
-                                        if "ontology_evidence" in feature:
-                                            if original_term in feature["ontology_evidence"]:
-                                                if event_index in feature["ontology_evidence"][original_term]:
-                                                    termdata["evidence"] = feature["ontology_evidence"][original_term][event_index]
-                                        events_array[event_index]["ontology_terms"][feature["id"]].append(termdata)
+                                        for event_index in termhash[term]:
+                                            termdata = {"term" : term}
+                                            if len(modelseed_ids) > 0:
+                                                termdata["modelseed_ids"] = modelseed_ids
+                                            if "ontology_evidence" in feature:
+                                                if original_term in feature["ontology_evidence"]:
+                                                    if event_index in feature["ontology_evidence"][original_term]:
+                                                        termdata["evidence"] = feature["ontology_evidence"][original_term][event_index]
+                                            events_array[event_index]["ontology_terms"][feature["id"]].append(termdata)
         return output
     
     def add_annotation_ontology_events(self,params):
