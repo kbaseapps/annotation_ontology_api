@@ -314,7 +314,7 @@ class AnnotationOntologyAPI:
             params["type"] = res["data"][0]["info"][2]
             ref = str(res["data"][0]["info"][6])+"/"+str(res["data"][0]["info"][0])+"/"+str(res["data"][0]["info"][4])
         output = {
-            "ftrs_not_found" : [],"ftrs_found" : 0
+            "ftrs_not_found" : [],"ftrs_found" : 0,"terms_not_found" : []
         }
         #Pulling existing ontology so we can standardize and check for matches
         ontologies_present = {}
