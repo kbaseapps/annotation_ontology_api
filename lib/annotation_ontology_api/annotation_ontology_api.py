@@ -322,6 +322,7 @@ class AnnotationOntologyAPI:
         if "clear_existing" in params and params["clear_existing"] == 1: 
             events = []
         #Scrolling through new events, stadardizing, and checking for matches
+        new_events = {}
         for event in params["events"]:
             if "ontology_id" not in event:
                 event["ontology_id"] = event["id"]
@@ -329,6 +330,7 @@ class AnnotationOntologyAPI:
             if event["ontology_id"] in ontology_translation:
                 event["ontology_id"] = ontology_translation[event["ontology_id"]]
             event["id"] = event["ontology_id"]
+            new_events[event["id"]] = 1
             #Creating description
             if "event_id" not in event:
                 event["event_id"] = event["method"]+":"+event["ontology_id"]+":"+event["timestamp"]
@@ -350,6 +352,10 @@ class AnnotationOntologyAPI:
         #Filling feature hash with all feature types which should all have unique ids
         alias_hash = {}
         feature_hash = {}
+        lc_feature_hash = {}
+        lc_alias_hash = {}
+        terms_not_found = {}
+        feature_found_hash = {}
         feature_types = ["features","cdss","mrnas","non_coding_features"]
         for currtype in feature_types:
             if currtype in params["object"]:
@@ -364,7 +370,8 @@ class AnnotationOntologyAPI:
                     else:
                         self.upgrade_feature(ftr,currtype)
                         feature_hash[ftr["id"]] = ftr
-                        self.process_feature_aliases(ftr,alias_hash)
+                        lc_feature_hash[ftr["id"].lower()] = ftr
+                        self.process_feature_aliases(ftr,alias_hash,lc_alias_hash)
                 for item in to_remove:
                     params["object"][currtype].remove(item)
         if "features_handle_ref" in params["object"]:
@@ -380,7 +387,8 @@ class AnnotationOntologyAPI:
         if "feature_object" in params:
             for ftr in params["feature_object"]:
                 feature_hash[ftr["id"]] = ftr
-                self.process_feature_aliases(ftr,alias_hash)
+                lc_feature_hash[ftr["id"].lower()] = ftr
+                self.process_feature_aliases(ftr,alias_hash,lc_alias_hash)
         #Adding events
         params["object"]["ontology_events"] = []
         for event in events:
@@ -400,11 +408,21 @@ class AnnotationOntologyAPI:
             for currgene in event["ontology_terms"]:
                 genes = []
                 if currgene in feature_hash:
-                    output["ftrs_found"] += 1
+                    if new_event["id"] in new_events:
+                        feature_found_hash[currgene] = 1
                     genes = [currgene]
                 elif currgene in alias_hash:
-                    output["ftrs_found"] += 1
+                    if new_event["id"] in new_events:
+                        feature_found_hash[currgene] = 1
                     genes = alias_hash[currgene]
+                elif currgene.lower() in lc_feature_hash:
+                    if new_event["id"] in new_events:
+                        feature_found_hash[currgene] = 1
+                    genes = [lc_feature_hash[currgene.lower()]["id"]]
+                elif currgene.lower() in lc_alias_hash:
+                    if new_event["id"] in new_events:
+                        feature_found_hash[currgene] = 1
+                    genes = lc_alias_hash[currgene.lower()]
                 else:
                     output["ftrs_not_found"].append(currgene)
                 for gene in genes:
@@ -437,6 +455,8 @@ class AnnotationOntologyAPI:
                                             if new_event["id"] not in ontologies_present:
                                                 ontologies_present[new_event["id"]] = {}
                                             ontologies_present[new_event["id"]][subterm] = self.get_term_name(new_event["id"],subterm)                        
+                                            if ontologies_present[new_event["id"]][subterm] == "Unknown":
+                                                terms_not_found[subterm] = 1
                             if term["term"] == None:
                                 continue
                             if term["term"] not in feature["ontology_terms"][new_event["id"]]:
@@ -445,12 +465,17 @@ class AnnotationOntologyAPI:
                             if new_event["id"] not in ontologies_present:
                                 ontologies_present[new_event["id"]] = {}
                             ontologies_present[new_event["id"]][term["term"]] = self.get_term_name(new_event["id"],term["term"])
+                            if ontologies_present[new_event["id"]][term["term"]] == "Unknown":
+                                terms_not_found[term["term"]] = 1
                             if "evidence" in term:
                                 if "ontology_evidence" not in feature:
                                     feature["ontology_evidence"] = {}
                                 if term["term"] not in feature["ontology_evidence"]:
                                     feature["ontology_evidence"][term["term"]] = {}
                                 feature["ontology_evidence"][term["term"]][event_index] = term["evidence"]
+        output["ftrs_found"] = len(feature_found_hash)
+        for term in terms_not_found:
+            output["terms_not_found"].append(term)
         params["object"]["ontologies_present"] = ontologies_present
         #Saving object if requested but not if it's an AMA
         if params["save"] == 1:
@@ -507,7 +532,7 @@ class AnnotationOntologyAPI:
                 output["feature_object"] = params["feature_object"]
         return output
     
-    def process_feature_aliases(self,ftr,alias_hash):
+    def process_feature_aliases(self,ftr,alias_hash,lc_alias_hash):
         if "aliases" in ftr:
             for alias in ftr["aliases"]:    
                 if not isinstance(alias, str):
@@ -515,11 +540,17 @@ class AnnotationOntologyAPI:
                 if alias not in alias_hash:
                     alias_hash[alias] = []
                 alias_hash[alias].append(ftr["id"])
+                if alias.lower() not in lc_alias_hash:
+                    lc_alias_hash[alias.lower()] = []
+                lc_alias_hash[alias.lower()].append(ftr["id"])
         if "db_xrefs" in ftr:
             for alias in ftr["db_xrefs"]:
                 if alias[1] not in alias_hash:
                     alias_hash[alias[1]] = []
-                    alias_hash[alias[1]].append(ftr["id"])
+                alias_hash[alias[1]].append(ftr["id"])
+                if alias[1].lower() not in lc_alias_hash:
+                    lc_alias_hash[alias[1].lower()] = []
+                lc_alias_hash[alias[1].lower()].append(ftr["id"])
     
     def upgrade_feature(self,ftr,type):
         if "function" in ftr:
@@ -550,6 +581,8 @@ class AnnotationOntologyAPI:
                 ftr["md5"] = ""
         
     def check_genome(self,genome,ref = None):
+        if "gc_content" in genome and isinstance(genome["gc_content"],str):
+            genome["gc_content"] = float(genome["gc_content"])
         if "md5" not in genome:
             genome["md5"] = ""
         if "molecule_type" not in genome:
