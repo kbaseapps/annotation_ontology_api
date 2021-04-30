@@ -33,7 +33,7 @@ class annotation_ontology_api:
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
-        if self.config["cache"] == 1:
+        if self.config["cache"] == "1":
             endpoint = self.caching_service_url + '/cache/annotation_ontology_api-'+self.config['ctx']["user_id"]
             bytestring = str.encode(json.dumps(params))
             resp = requests.post(
