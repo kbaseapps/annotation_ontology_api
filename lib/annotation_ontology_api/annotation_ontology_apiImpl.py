@@ -38,15 +38,15 @@ class annotation_ontology_api:
     def cache(self,params):
         if self.config["cache"] == 1:
             endpoint = self.caching_service_url + '/cache/annotation_ontology_api-'+self.config['ctx']["user_id"]
-        bytestring = str.encode(json.dumps(params))
-        resp = requests.post(
-            endpoint,
-            files={'file': ('data.txt', bytestring)},
-            headers={'Authorization': self.config['ctx']["token"]}
-        )
-        resp_json = resp.json()
-        if resp_json['status'] == 'error':
-            raise Exception(resp_json['error'])
+            bytestring = str.encode(json.dumps(params))
+            resp = requests.post(
+                endpoint,
+                files={'file': ('data.txt', bytestring)},
+                headers={'Authorization': self.config['ctx']["token"]}
+            )
+            resp_json = resp.json()
+            if resp_json['status'] == 'error':
+                raise Exception(resp_json['error'])
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
