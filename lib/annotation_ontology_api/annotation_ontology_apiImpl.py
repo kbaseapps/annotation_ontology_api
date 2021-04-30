@@ -38,7 +38,7 @@ class annotation_ontology_api:
     def cache(self,params):
         if not os.path.exists(self.config["scratch"]+"/cache/"):
             os.makedirs(self.config["scratch"]+"/cache/")
-        if self.config["cache"] == 1:
+        if "cache" in self.config and self.config["cache"] == 1:
             json_str = json.dumps(params)
             json_bytes = json_str.encode('utf-8')
             ct = datetime.datetime.now()
