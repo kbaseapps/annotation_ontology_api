@@ -42,8 +42,8 @@ class annotation_ontology_api:
             json_str = json.dumps(params)
             json_bytes = json_str.encode('utf-8')
             ct = datetime.datetime.now()
-            ct.replace(" ","")
-            ct.replace(":","_")
+            ct = ct.replace(" ","")
+            ct = ct.replace(":","_")
             jsonfilename = self.config["scratch"]+"/cache/"+self.config["ctx"]["user_id"]+"-"+ct+".gz"
             with gzip.open(jsonfilename, 'w') as fout:
                 fout.write(json_bytes)
