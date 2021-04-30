@@ -341,10 +341,6 @@ class Application(object):
                              name='annotation_ontology_api.add_annotation_ontology_events',
                              types=[dict])
         self.method_authentication['annotation_ontology_api.add_annotation_ontology_events'] = 'optional'  # noqa
-        self.rpc_service.add(impl_annotation_ontology_api.svradmin,
-                             name='annotation_ontology_api.svradmin',
-                             types=[object])
-        self.method_authentication['annotation_ontology_api.svradmin'] = 'required'  # noqa
         self.rpc_service.add(impl_annotation_ontology_api.status,
                              name='annotation_ontology_api.status',
                              types=[dict])

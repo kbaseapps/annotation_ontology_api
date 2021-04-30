@@ -11,7 +11,6 @@ import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.RpcContext;
-import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
 
 /**
@@ -196,24 +195,6 @@ public class AnnotationOntologyApiClient {
         args.add(params);
         TypeReference<List<AddAnnotationOntologyEventsOutput>> retType = new TypeReference<List<AddAnnotationOntologyEventsOutput>>() {};
         List<AddAnnotationOntologyEventsOutput> res = caller.jsonrpcCall("annotation_ontology_api.add_annotation_ontology_events", args, retType, true, false, jsonRpcContext, this.serviceVersion);
-        return res.get(0);
-    }
-
-    /**
-     * <p>Original spec-file function name: svradmin</p>
-     * <pre>
-     * Admin function for use in debugging
-     * </pre>
-     * @param   params   instance of unspecified object
-     * @return   parameter "output" of unspecified object
-     * @throws IOException if an IO exception occurs
-     * @throws JsonClientException if a JSON RPC exception occurs
-     */
-    public UObject svradmin(UObject params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
-        List<Object> args = new ArrayList<Object>();
-        args.add(params);
-        TypeReference<List<UObject>> retType = new TypeReference<List<UObject>>() {};
-        List<UObject> res = caller.jsonrpcCall("annotation_ontology_api.svradmin", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

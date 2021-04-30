@@ -32,21 +32,21 @@ class annotation_ontology_api:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/annotation_ontology_api.git"
-    GIT_COMMIT_HASH = "515c9c1b8f029cc18c5f27904771adc706820376"
+    GIT_COMMIT_HASH = "3806d786ab9b32ac28574938fe9904a117835421"
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
-        if not os.path.exists(self.config["scratch"]+"/cache/"):
-            os.makedirs(self.config["scratch"]+"/cache/")
-        if "cache" in self.config and self.config["cache"] == 1:
-            json_str = json.dumps(params)
-            json_bytes = json_str.encode('utf-8')
-            ct = datetime.datetime.now()
-            ct = ct.replace(" ","")
-            ct = ct.replace(":","_")
-            jsonfilename = self.config["scratch"]+"/cache/"+self.config["ctx"]["user_id"]+"-"+ct+".gz"
-            with gzip.open(jsonfilename, 'w') as fout:
-                fout.write(json_bytes)
+        if self.config["cache"] == 1:
+            endpoint = self.caching_service_url + '/cache/annotation_ontology_api-'+self.config['ctx']["user_id"]
+        bytestring = str.encode(json.dumps(params))
+        resp = requests.post(
+            endpoint,
+            files={'file': ('data.txt', bytestring)},
+            headers={'Authorization': self.config['ctx']["token"]}
+        )
+        resp_json = resp.json()
+        if resp_json['status'] == 'error':
+            raise Exception(resp_json['error'])
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -150,48 +150,6 @@ class annotation_ontology_api:
         if not isinstance(output, dict):
             raise ValueError('Method add_annotation_ontology_events return value ' +
                              'output is not type dict as required.')
-        # return the results
-        return [output]
-
-    def svradmin(self, ctx, params):
-        """
-        Admin function for use in debugging
-        :param params: instance of unspecified object
-        :returns: instance of unspecified object
-        """
-        # ctx is the context object
-        # return variables are: output
-        #BEGIN svradmin
-        self.cache(params)
-        output = {}
-        if ctx["user_id"] != "chenry":
-            return {"error":"unauthorized"}
-        for command in params["commands"]:
-            if command == "clear_cache":
-                folder = os.path.join(self.config["scratch"], "cache")
-                for filename in os.listdir(folder):
-                    file_path = os.path.join(folder, filename)
-                    try:
-                        if os.path.isfile(file_path) or os.path.islink(file_path):
-                            os.unlink(file_path)
-                        elif os.path.isdir(file_path):
-                            shutil.rmtree(file_path)
-                    except Exception as e:
-                        print('Failed to delete %s. Reason: %s' % (file_path, e))
-            if command == "list":
-                output[command] = os.listdir(os.path.join(self.config["scratch"], "cache"))
-            if command == "fetch":
-                jsonfilename = os.path.join(self.config["scratch"],"cache",params["commands"][command])
-                with gzip.open(jsonfilename, 'r') as fin:
-                    json_bytes = fin.read()
-                    json_str = json_bytes.decode('utf-8')
-                    output[command] = json.loads(json_str)
-        #END svradmin
-
-        # At some point might do deeper type checking...
-        if not isinstance(output, object):
-            raise ValueError('Method svradmin return value ' +
-                             'output is not type object as required.')
         # return the results
         return [output]
     def status(self, ctx):

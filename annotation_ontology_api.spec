@@ -55,10 +55,5 @@ module annotation_ontology_api {
         Adds a new annotation ontology event to a genome or AMA
     */
 	funcdef add_annotation_ontology_events(AddAnnotationOntologyEventsParams params) returns (AddAnnotationOntologyEventsOutput output) authentication optional;
-	
-    /*
-        Admin function for use in debugging
-    */
-    funcdef svradmin(UnspecifiedObject params) returns (UnspecifiedObject output) authentication required;
-    
+	    
 };

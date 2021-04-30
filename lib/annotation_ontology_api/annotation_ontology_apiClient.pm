@@ -358,88 +358,6 @@ Adds a new annotation ontology event to a genome or AMA
     }
 }
  
-
-
-=head2 svradmin
-
-  $output = $obj->svradmin($params)
-
-=over 4
-
-=item Parameter and return types
-
-=begin html
-
-<pre>
-$params is an UnspecifiedObject, which can hold any non-null object
-$output is an UnspecifiedObject, which can hold any non-null object
-
-</pre>
-
-=end html
-
-=begin text
-
-$params is an UnspecifiedObject, which can hold any non-null object
-$output is an UnspecifiedObject, which can hold any non-null object
-
-
-=end text
-
-=item Description
-
-Admin function for use in debugging
-
-=back
-
-=cut
-
- sub svradmin
-{
-    my($self, @args) = @_;
-
-# Authentication: required
-
-    if ((my $n = @args) != 1)
-    {
-	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function svradmin (received $n, expecting 1)");
-    }
-    {
-	my($params) = @args;
-
-	my @_bad_arguments;
-        (defined $params) or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
-        if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to svradmin:\n" . join("", map { "\t$_\n" } @_bad_arguments);
-	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'svradmin');
-	}
-    }
-
-    my $url = $self->{url};
-    my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "annotation_ontology_api.svradmin",
-	    params => \@args,
-    });
-    if ($result) {
-	if ($result->is_error) {
-	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
-					       code => $result->content->{error}->{code},
-					       method_name => 'svradmin',
-					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
-					      );
-	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
-	}
-    } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method svradmin",
-					    status_line => $self->{client}->status_line,
-					    method_name => 'svradmin',
-				       );
-    }
-}
- 
   
 sub status
 {
@@ -483,16 +401,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'svradmin',
+                method_name => 'add_annotation_ontology_events',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method svradmin",
+            error => "Error invoking method add_annotation_ontology_events",
             status_line => $self->{client}->status_line,
-            method_name => 'svradmin',
+            method_name => 'add_annotation_ontology_events',
         );
     }
 }

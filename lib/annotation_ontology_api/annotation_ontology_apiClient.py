@@ -81,16 +81,6 @@ class annotation_ontology_api(object):
             'annotation_ontology_api.add_annotation_ontology_events',
             [params], self._service_ver, context)
 
-    def svradmin(self, params, context=None):
-        """
-        Admin function for use in debugging
-        :param params: instance of unspecified object
-        :returns: instance of unspecified object
-        """
-        return self._client.call_method(
-            'annotation_ontology_api.svradmin',
-            [params], self._service_ver, context)
-
     def status(self, context=None):
         return self._client.call_method('annotation_ontology_api.status',
                                         [], self._service_ver, context)
