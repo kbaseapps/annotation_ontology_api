@@ -167,8 +167,6 @@ class annotation_ontology_api:
         if ctx["user_id"] != "chenry":
             return {"error":"unauthorized"}
         for command in params["commands"]:
-            if command == "activate_cache":
-                self.config['cache'] = params["commands"][command]
             if command == "clear_cache":
                 folder = os.path.join(self.config["scratch"], "cache")
                 for filename in os.listdir(folder):
