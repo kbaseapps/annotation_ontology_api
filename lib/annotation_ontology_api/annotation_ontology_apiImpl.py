@@ -36,6 +36,8 @@ class annotation_ontology_api:
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
+        if not os.path.exists(self.config["scratch"]+"/cache/"):
+            os.makedirs(self.config["scratch"]+"/cache/")
         if self.config["cache"] == 1:
             json_str = json.dumps(params)
             json_bytes = json_str.encode('utf-8')
@@ -160,6 +162,7 @@ class annotation_ontology_api:
         # ctx is the context object
         # return variables are: output
         #BEGIN svradmin
+        self.cache(params)
         output = {}
         if ctx["user_id"] != "chenry":
             return {"error":"unauthorized"}
