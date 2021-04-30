@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
 import os
-import shutil
-import gzip
 import json
 import requests
-import datetime
 from pprint import pformat
 from annotation_ontology_api.annotation_ontology_api import AnnotationOntologyAPI
 from Workspace.WorkspaceClient import Workspace as workspaceService
@@ -56,6 +53,7 @@ class annotation_ontology_api:
         self.config = config
         self.ws_client = None
         self.dfu_client = None
+        self.caching_service_url = self.config['kbase-endpoint']+"/cache/v1"
         if 'SDK_CALLBACK_URL' in os.environ:
             self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
             self.dfu_client = DataFileUtil(self.config['SDK_CALLBACK_URL'])
