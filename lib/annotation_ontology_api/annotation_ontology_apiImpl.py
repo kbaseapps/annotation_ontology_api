@@ -36,7 +36,7 @@ class annotation_ontology_api:
         if self.config["cache"] == "1":
             headers = {'Content-Type': 'application/json', 'Authorization': self.config['ctx']["token"]}
             endpoint = self.caching_service_url + '/cache_id'
-            resp_json = requests.post(endpoint, data='annotation_ontology_api-'+self.config['ctx']["user_id"], headers=headers).json()
+            resp_json = requests.post(endpoint, data=json.dumps({"service":"annotation_ontology_api","user":self.config['ctx']["user_id"]}), headers=headers).json()
             if resp_json.get('error'):
                 raise Exception(resp_json['error'])            
             endpoint = self.caching_service_url + '/cache/'+resp_json['cache_id']
