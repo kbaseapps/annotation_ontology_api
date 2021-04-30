@@ -33,12 +33,24 @@ class annotation_ontology_api:
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
+        if "get_cache" in params and params["get_cache"] == 1:
+            headers = {'Content-Type': 'application/json', 'Authorization': self.config['ctx']["token"]}
+            endpoint = self.caching_service_url + '/cache_id'
+            resp_json = requests.post(endpoint, data=json.dumps({"service":"annotation_ontology_api","user":self.config['ctx']["user_id"]}), headers=headers).json()
+            if resp_json.get('error'):
+                raise Exception(resp_json['error'])
+            endpoint = self.caching_service_url + '/cache/'+resp_json['cache_id']
+            resp = requests.get(endpoint, headers={'Authorization': self.config['ctx']["token"]})
+            if resp.status_code == 200:
+                return {"data":resp.text}
+            else:
+                return {"data":'cache does not exist'}
         if self.config["cache"] == "1":
             headers = {'Content-Type': 'application/json', 'Authorization': self.config['ctx']["token"]}
             endpoint = self.caching_service_url + '/cache_id'
             resp_json = requests.post(endpoint, data=json.dumps({"service":"annotation_ontology_api","user":self.config['ctx']["user_id"]}), headers=headers).json()
             if resp_json.get('error'):
-                raise Exception(resp_json['error'])            
+                raise Exception(resp_json['error'])
             endpoint = self.caching_service_url + '/cache/'+resp_json['cache_id']
             bytestring = str.encode(json.dumps(params))
             resp = requests.post(
@@ -49,6 +61,7 @@ class annotation_ontology_api:
             resp_json = resp.json()
             if resp_json['status'] == 'error':
                 raise Exception(resp_json['error'])
+            return None
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -92,17 +105,20 @@ class annotation_ontology_api:
         # return variables are: output
         #BEGIN get_annotation_ontology_events
         self.config['ctx'] = ctx
-        self.cache(params)
-        #print(("Input parameters: " + pformat(params)))
-        anno_api = None
-        if self.ws_client == None:
-            if "workspace-url" in params:
-                anno_api = AnnotationOntologyAPI(self.config,workspaceService(params['workspace-url'], token=ctx['token']),self.dfu_client)
+        result = self.cache(params)
+        if result == None:
+            #print(("Input parameters: " + pformat(params)))
+            anno_api = None
+            if self.ws_client == None:
+                if "workspace-url" in params:
+                    anno_api = AnnotationOntologyAPI(self.config,workspaceService(params['workspace-url'], token=ctx['token']),self.dfu_client)
+                else:
+                    anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
             else:
-                anno_api = AnnotationOntologyAPI(self.config,workspaceService(self.config['workspace-url'], token=ctx['token']),self.dfu_client)
+                anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
+            output = anno_api.get_annotation_ontology_events(params)
         else:
-            anno_api = AnnotationOntologyAPI(self.config,self.ws_client,self.dfu_client)
-        output = anno_api.get_annotation_ontology_events(params)
+            output = result
         #END get_annotation_ontology_events
 
         # At some point might do deeper type checking...
