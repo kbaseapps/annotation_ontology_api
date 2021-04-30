@@ -42,7 +42,7 @@ class annotation_ontology_api:
             endpoint = self.caching_service_url + '/cache/'+resp_json['cache_id']
             resp = requests.get(endpoint, headers={'Authorization': self.config['ctx']["token"]})
             if resp.status_code == 200:
-                return {"data":resp.text}
+                return json.loads(resp.text)
             else:
                 return {"data":'cache does not exist'}
         if self.config["cache"] == "1":
