@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "input_ref",
     "input_workspace",
     "query_events",
-    "query_genes"
+    "query_genes",
+    "standardize_modelseed_ids"
 })
 public class GetAnnotationOntologyEventsParams {
 
@@ -35,6 +36,8 @@ public class GetAnnotationOntologyEventsParams {
     private List<String> queryEvents;
     @JsonProperty("query_genes")
     private List<String> queryGenes;
+    @JsonProperty("standardize_modelseed_ids")
+    private Long standardizeModelseedIds;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("input_ref")
@@ -97,6 +100,21 @@ public class GetAnnotationOntologyEventsParams {
         return this;
     }
 
+    @JsonProperty("standardize_modelseed_ids")
+    public Long getStandardizeModelseedIds() {
+        return standardizeModelseedIds;
+    }
+
+    @JsonProperty("standardize_modelseed_ids")
+    public void setStandardizeModelseedIds(Long standardizeModelseedIds) {
+        this.standardizeModelseedIds = standardizeModelseedIds;
+    }
+
+    public GetAnnotationOntologyEventsParams withStandardizeModelseedIds(Long standardizeModelseedIds) {
+        this.standardizeModelseedIds = standardizeModelseedIds;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -109,7 +127,7 @@ public class GetAnnotationOntologyEventsParams {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((("GetAnnotationOntologyEventsParams"+" [inputRef=")+ inputRef)+", inputWorkspace=")+ inputWorkspace)+", queryEvents=")+ queryEvents)+", queryGenes=")+ queryGenes)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((("GetAnnotationOntologyEventsParams"+" [inputRef=")+ inputRef)+", inputWorkspace=")+ inputWorkspace)+", queryEvents=")+ queryEvents)+", queryGenes=")+ queryGenes)+", standardizeModelseedIds=")+ standardizeModelseedIds)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

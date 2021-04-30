@@ -21,16 +21,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "event_id",
+    "description",
     "ontology_id",
     "method",
     "method_version",
     "timestamp",
+    "feature_types",
     "ontology_terms"
 })
 public class AnnotationOntologyEvent {
 
     @JsonProperty("event_id")
     private java.lang.String eventId;
+    @JsonProperty("description")
+    private java.lang.String description;
     @JsonProperty("ontology_id")
     private java.lang.String ontologyId;
     @JsonProperty("method")
@@ -39,6 +43,8 @@ public class AnnotationOntologyEvent {
     private java.lang.String methodVersion;
     @JsonProperty("timestamp")
     private java.lang.String timestamp;
+    @JsonProperty("feature_types")
+    private Map<String, String> featureTypes;
     @JsonProperty("ontology_terms")
     private Map<String, List<AnnotationOntologyTerm>> ontologyTerms;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
@@ -55,6 +61,21 @@ public class AnnotationOntologyEvent {
 
     public AnnotationOntologyEvent withEventId(java.lang.String eventId) {
         this.eventId = eventId;
+        return this;
+    }
+
+    @JsonProperty("description")
+    public java.lang.String getDescription() {
+        return description;
+    }
+
+    @JsonProperty("description")
+    public void setDescription(java.lang.String description) {
+        this.description = description;
+    }
+
+    public AnnotationOntologyEvent withDescription(java.lang.String description) {
+        this.description = description;
         return this;
     }
 
@@ -118,6 +139,21 @@ public class AnnotationOntologyEvent {
         return this;
     }
 
+    @JsonProperty("feature_types")
+    public Map<String, String> getFeatureTypes() {
+        return featureTypes;
+    }
+
+    @JsonProperty("feature_types")
+    public void setFeatureTypes(Map<String, String> featureTypes) {
+        this.featureTypes = featureTypes;
+    }
+
+    public AnnotationOntologyEvent withFeatureTypes(Map<String, String> featureTypes) {
+        this.featureTypes = featureTypes;
+        return this;
+    }
+
     @JsonProperty("ontology_terms")
     public Map<String, List<AnnotationOntologyTerm>> getOntologyTerms() {
         return ontologyTerms;
@@ -145,7 +181,7 @@ public class AnnotationOntologyEvent {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((("AnnotationOntologyEvent"+" [eventId=")+ eventId)+", ontologyId=")+ ontologyId)+", method=")+ method)+", methodVersion=")+ methodVersion)+", timestamp=")+ timestamp)+", ontologyTerms=")+ ontologyTerms)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((("AnnotationOntologyEvent"+" [eventId=")+ eventId)+", description=")+ description)+", ontologyId=")+ ontologyId)+", method=")+ method)+", methodVersion=")+ methodVersion)+", timestamp=")+ timestamp)+", featureTypes=")+ featureTypes)+", ontologyTerms=")+ ontologyTerms)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

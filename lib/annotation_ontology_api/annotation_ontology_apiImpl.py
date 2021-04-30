@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
 import os
+import shutil
+import gzip
+import json
 import requests
+import datetime
 from pprint import pformat
 from annotation_ontology_api.annotation_ontology_api import AnnotationOntologyAPI
 from Workspace.WorkspaceClient import Workspace as workspaceService
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 # silence whining
-import requests
 requests.packages.urllib3.disable_warnings()
 #END_HEADER
 
@@ -28,10 +31,20 @@ class annotation_ontology_api:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = ""
-    GIT_COMMIT_HASH = ""
+    GIT_URL = "https://github.com/kbaseapps/annotation_ontology_api.git"
+    GIT_COMMIT_HASH = "515c9c1b8f029cc18c5f27904771adc706820376"
 
     #BEGIN_CLASS_HEADER
+    def cache(self,params):
+        if self.config["cache"] == 1:
+            json_str = json.dumps(params)
+            json_bytes = json_str.encode('utf-8')
+            ct = datetime.datetime.now()
+            ct.replace(" ","")
+            ct.replace(":","_")
+            jsonfilename = self.config["scratch"]+"/cache/"+self.config["ctx"]["user_id"]+"-"+ct+".gz"
+            with gzip.open(jsonfilename, 'w') as fout:
+                fout.write(json_bytes)
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -56,22 +69,25 @@ class annotation_ontology_api:
         :param params: instance of type "GetAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "query_events" of list of
-           String, parameter "query_genes" of list of String
+           String, parameter "query_genes" of list of String, parameter
+           "standardize_modelseed_ids" of Long
         :returns: instance of type "GetAnnotationOntologyEventsOutput" ->
            structure: parameter "events" of list of type
            "AnnotationOntologyEvent" -> structure: parameter "event_id" of
-           String, parameter "ontology_id" of String, parameter "method" of
-           String, parameter "method_version" of String, parameter
-           "timestamp" of String, parameter "ontology_terms" of mapping from
-           String to list of type "AnnotationOntologyTerm" (Insert your
-           typespec information here.) -> structure: parameter "term" of
-           String, parameter "modelseed_id" of String, parameter "evidence"
+           String, parameter "description" of String, parameter "ontology_id"
+           of String, parameter "method" of String, parameter
+           "method_version" of String, parameter "timestamp" of String,
+           parameter "feature_types" of mapping from String to String,
+           parameter "ontology_terms" of mapping from String to list of type
+           "AnnotationOntologyTerm" -> structure: parameter "term" of String,
+           parameter "modelseed_ids" of list of String, parameter "evidence"
            of String
         """
         # ctx is the context object
         # return variables are: output
         #BEGIN get_annotation_ontology_events
         self.config['ctx'] = ctx
+        self.cache(params)
         #print(("Input parameters: " + pformat(params)))
         anno_api = None
         if self.ws_client == None:
@@ -97,14 +113,16 @@ class annotation_ontology_api:
         :param params: instance of type "AddAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "output_name" of String,
-           parameter "output_workspace" of String, parameter "events" of list
-           of type "AnnotationOntologyEvent" -> structure: parameter
-           "event_id" of String, parameter "ontology_id" of String, parameter
-           "method" of String, parameter "method_version" of String,
-           parameter "timestamp" of String, parameter "ontology_terms" of
-           mapping from String to list of type "AnnotationOntologyTerm"
-           (Insert your typespec information here.) -> structure: parameter
-           "term" of String, parameter "modelseed_id" of String, parameter
+           parameter "output_workspace" of String, parameter "clear_existing"
+           of Long, parameter "overwrite_matching" of Long, parameter
+           "events" of list of type "AnnotationOntologyEvent" -> structure:
+           parameter "event_id" of String, parameter "description" of String,
+           parameter "ontology_id" of String, parameter "method" of String,
+           parameter "method_version" of String, parameter "timestamp" of
+           String, parameter "feature_types" of mapping from String to
+           String, parameter "ontology_terms" of mapping from String to list
+           of type "AnnotationOntologyTerm" -> structure: parameter "term" of
+           String, parameter "modelseed_ids" of list of String, parameter
            "evidence" of String
         :returns: instance of type "AddAnnotationOntologyEventsOutput" ->
            structure: parameter "output_ref" of String
@@ -113,6 +131,7 @@ class annotation_ontology_api:
         # return variables are: output
         #BEGIN add_annotation_ontology_events
         self.config['ctx'] = ctx
+        self.cache(params)
         #print(("Input parameters: " + pformat(params)))
         anno_api = None
         if self.ws_client == None:
@@ -129,6 +148,49 @@ class annotation_ontology_api:
         if not isinstance(output, dict):
             raise ValueError('Method add_annotation_ontology_events return value ' +
                              'output is not type dict as required.')
+        # return the results
+        return [output]
+
+    def svradmin(self, ctx, params):
+        """
+        Admin function for use in debugging
+        :param params: instance of unspecified object
+        :returns: instance of unspecified object
+        """
+        # ctx is the context object
+        # return variables are: output
+        #BEGIN svradmin
+        output = {}
+        if ctx["user_id"] != "chenry":
+            return {"error":"unauthorized"}
+        for command in params["commands"]:
+            if command == "activate_cache":
+                self.config['cache'] = params["commands"][command]
+            if command == "clear_cache":
+                folder = os.path.join(self.config["scratch"], "cache")
+                for filename in os.listdir(folder):
+                    file_path = os.path.join(folder, filename)
+                    try:
+                        if os.path.isfile(file_path) or os.path.islink(file_path):
+                            os.unlink(file_path)
+                        elif os.path.isdir(file_path):
+                            shutil.rmtree(file_path)
+                    except Exception as e:
+                        print('Failed to delete %s. Reason: %s' % (file_path, e))
+            if command == "list":
+                output[command] = os.listdir(os.path.join(self.config["scratch"], "cache"))
+            if command == "fetch":
+                jsonfilename = os.path.join(self.config["scratch"],"cache",params["commands"][command])
+                with gzip.open(jsonfilename, 'r') as fin:
+                    json_bytes = fin.read()
+                    json_str = json_bytes.decode('utf-8')
+                    output[command] = json.loads(json_str)
+        #END svradmin
+
+        # At some point might do deeper type checking...
+        if not isinstance(output, object):
+            raise ValueError('Method svradmin return value ' +
+                             'output is not type object as required.')
         # return the results
         return [output]
     def status(self, ctx):

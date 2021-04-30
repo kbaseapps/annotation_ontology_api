@@ -126,18 +126,21 @@ GetAnnotationOntologyEventsParams is a reference to a hash where the following k
 	input_workspace has a value which is a string
 	query_events has a value which is a reference to a list where each element is a string
 	query_genes has a value which is a reference to a list where each element is a string
+	standardize_modelseed_ids has a value which is an int
 GetAnnotationOntologyEventsOutput is a reference to a hash where the following keys are defined:
 	events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 AnnotationOntologyEvent is a reference to a hash where the following keys are defined:
 	event_id has a value which is a string
+	description has a value which is a string
 	ontology_id has a value which is a string
 	method has a value which is a string
 	method_version has a value which is a string
 	timestamp has a value which is a string
+	feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 	ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 AnnotationOntologyTerm is a reference to a hash where the following keys are defined:
 	term has a value which is a string
-	modelseed_id has a value which is a string
+	modelseed_ids has a value which is a reference to a list where each element is a string
 	evidence has a value which is a string
 
 </pre>
@@ -153,18 +156,21 @@ GetAnnotationOntologyEventsParams is a reference to a hash where the following k
 	input_workspace has a value which is a string
 	query_events has a value which is a reference to a list where each element is a string
 	query_genes has a value which is a reference to a list where each element is a string
+	standardize_modelseed_ids has a value which is an int
 GetAnnotationOntologyEventsOutput is a reference to a hash where the following keys are defined:
 	events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 AnnotationOntologyEvent is a reference to a hash where the following keys are defined:
 	event_id has a value which is a string
+	description has a value which is a string
 	ontology_id has a value which is a string
 	method has a value which is a string
 	method_version has a value which is a string
 	timestamp has a value which is a string
+	feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 	ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 AnnotationOntologyTerm is a reference to a hash where the following keys are defined:
 	term has a value which is a string
-	modelseed_id has a value which is a string
+	modelseed_ids has a value which is a reference to a list where each element is a string
 	evidence has a value which is a string
 
 
@@ -244,17 +250,21 @@ AddAnnotationOntologyEventsParams is a reference to a hash where the following k
 	input_workspace has a value which is a string
 	output_name has a value which is a string
 	output_workspace has a value which is a string
+	clear_existing has a value which is an int
+	overwrite_matching has a value which is an int
 	events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 AnnotationOntologyEvent is a reference to a hash where the following keys are defined:
 	event_id has a value which is a string
+	description has a value which is a string
 	ontology_id has a value which is a string
 	method has a value which is a string
 	method_version has a value which is a string
 	timestamp has a value which is a string
+	feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 	ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 AnnotationOntologyTerm is a reference to a hash where the following keys are defined:
 	term has a value which is a string
-	modelseed_id has a value which is a string
+	modelseed_ids has a value which is a reference to a list where each element is a string
 	evidence has a value which is a string
 AddAnnotationOntologyEventsOutput is a reference to a hash where the following keys are defined:
 	output_ref has a value which is a string
@@ -272,17 +282,21 @@ AddAnnotationOntologyEventsParams is a reference to a hash where the following k
 	input_workspace has a value which is a string
 	output_name has a value which is a string
 	output_workspace has a value which is a string
+	clear_existing has a value which is an int
+	overwrite_matching has a value which is an int
 	events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 AnnotationOntologyEvent is a reference to a hash where the following keys are defined:
 	event_id has a value which is a string
+	description has a value which is a string
 	ontology_id has a value which is a string
 	method has a value which is a string
 	method_version has a value which is a string
 	timestamp has a value which is a string
+	feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 	ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 AnnotationOntologyTerm is a reference to a hash where the following keys are defined:
 	term has a value which is a string
-	modelseed_id has a value which is a string
+	modelseed_ids has a value which is a reference to a list where each element is a string
 	evidence has a value which is a string
 AddAnnotationOntologyEventsOutput is a reference to a hash where the following keys are defined:
 	output_ref has a value which is a string
@@ -344,6 +358,88 @@ Adds a new annotation ontology event to a genome or AMA
     }
 }
  
+
+
+=head2 svradmin
+
+  $output = $obj->svradmin($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is an UnspecifiedObject, which can hold any non-null object
+$output is an UnspecifiedObject, which can hold any non-null object
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is an UnspecifiedObject, which can hold any non-null object
+$output is an UnspecifiedObject, which can hold any non-null object
+
+
+=end text
+
+=item Description
+
+Admin function for use in debugging
+
+=back
+
+=cut
+
+ sub svradmin
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function svradmin (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (defined $params) or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to svradmin:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'svradmin');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "annotation_ontology_api.svradmin",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'svradmin',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method svradmin",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'svradmin',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -387,16 +483,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'add_annotation_ontology_events',
+                method_name => 'svradmin',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method add_annotation_ontology_events",
+            error => "Error invoking method svradmin",
             status_line => $self->{client}->status_line,
-            method_name => 'add_annotation_ontology_events',
+            method_name => 'svradmin',
         );
     }
 }
@@ -439,11 +535,6 @@ sub _validate_version {
 
 
 
-=item Description
-
-Insert your typespec information here.
-
-
 =item Definition
 
 =begin html
@@ -451,7 +542,7 @@ Insert your typespec information here.
 <pre>
 a reference to a hash where the following keys are defined:
 term has a value which is a string
-modelseed_id has a value which is a string
+modelseed_ids has a value which is a reference to a list where each element is a string
 evidence has a value which is a string
 
 </pre>
@@ -462,7 +553,7 @@ evidence has a value which is a string
 
 a reference to a hash where the following keys are defined:
 term has a value which is a string
-modelseed_id has a value which is a string
+modelseed_ids has a value which is a reference to a list where each element is a string
 evidence has a value which is a string
 
 
@@ -485,10 +576,12 @@ evidence has a value which is a string
 <pre>
 a reference to a hash where the following keys are defined:
 event_id has a value which is a string
+description has a value which is a string
 ontology_id has a value which is a string
 method has a value which is a string
 method_version has a value which is a string
 timestamp has a value which is a string
+feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 
 </pre>
@@ -499,10 +592,12 @@ ontology_terms has a value which is a reference to a hash where the key is a str
 
 a reference to a hash where the following keys are defined:
 event_id has a value which is a string
+description has a value which is a string
 ontology_id has a value which is a string
 method has a value which is a string
 method_version has a value which is a string
 timestamp has a value which is a string
+feature_types has a value which is a reference to a hash where the key is a string and the value is a string
 ontology_terms has a value which is a reference to a hash where the key is a string and the value is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyTerm
 
 
@@ -528,6 +623,7 @@ input_ref has a value which is a string
 input_workspace has a value which is a string
 query_events has a value which is a reference to a list where each element is a string
 query_genes has a value which is a reference to a list where each element is a string
+standardize_modelseed_ids has a value which is an int
 
 </pre>
 
@@ -540,6 +636,7 @@ input_ref has a value which is a string
 input_workspace has a value which is a string
 query_events has a value which is a reference to a list where each element is a string
 query_genes has a value which is a reference to a list where each element is a string
+standardize_modelseed_ids has a value which is an int
 
 
 =end text
@@ -594,6 +691,8 @@ input_ref has a value which is a string
 input_workspace has a value which is a string
 output_name has a value which is a string
 output_workspace has a value which is a string
+clear_existing has a value which is an int
+overwrite_matching has a value which is an int
 events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 
 </pre>
@@ -607,6 +706,8 @@ input_ref has a value which is a string
 input_workspace has a value which is a string
 output_name has a value which is a string
 output_workspace has a value which is a string
+clear_existing has a value which is an int
+overwrite_matching has a value which is an int
 events has a value which is a reference to a list where each element is an annotation_ontology_api.AnnotationOntologyEvent
 
 

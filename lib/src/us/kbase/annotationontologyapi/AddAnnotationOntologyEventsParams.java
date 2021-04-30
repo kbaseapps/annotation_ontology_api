@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "input_workspace",
     "output_name",
     "output_workspace",
+    "clear_existing",
+    "overwrite_matching",
     "events"
 })
 public class AddAnnotationOntologyEventsParams {
@@ -36,6 +38,10 @@ public class AddAnnotationOntologyEventsParams {
     private String outputName;
     @JsonProperty("output_workspace")
     private String outputWorkspace;
+    @JsonProperty("clear_existing")
+    private Long clearExisting;
+    @JsonProperty("overwrite_matching")
+    private Long overwriteMatching;
     @JsonProperty("events")
     private List<AnnotationOntologyEvent> events;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -100,6 +106,36 @@ public class AddAnnotationOntologyEventsParams {
         return this;
     }
 
+    @JsonProperty("clear_existing")
+    public Long getClearExisting() {
+        return clearExisting;
+    }
+
+    @JsonProperty("clear_existing")
+    public void setClearExisting(Long clearExisting) {
+        this.clearExisting = clearExisting;
+    }
+
+    public AddAnnotationOntologyEventsParams withClearExisting(Long clearExisting) {
+        this.clearExisting = clearExisting;
+        return this;
+    }
+
+    @JsonProperty("overwrite_matching")
+    public Long getOverwriteMatching() {
+        return overwriteMatching;
+    }
+
+    @JsonProperty("overwrite_matching")
+    public void setOverwriteMatching(Long overwriteMatching) {
+        this.overwriteMatching = overwriteMatching;
+    }
+
+    public AddAnnotationOntologyEventsParams withOverwriteMatching(Long overwriteMatching) {
+        this.overwriteMatching = overwriteMatching;
+        return this;
+    }
+
     @JsonProperty("events")
     public List<AnnotationOntologyEvent> getEvents() {
         return events;
@@ -127,7 +163,7 @@ public class AddAnnotationOntologyEventsParams {
 
     @Override
     public String toString() {
-        return ((((((((((((("AddAnnotationOntologyEventsParams"+" [inputRef=")+ inputRef)+", inputWorkspace=")+ inputWorkspace)+", outputName=")+ outputName)+", outputWorkspace=")+ outputWorkspace)+", events=")+ events)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((("AddAnnotationOntologyEventsParams"+" [inputRef=")+ inputRef)+", inputWorkspace=")+ inputWorkspace)+", outputName=")+ outputName)+", outputWorkspace=")+ outputWorkspace)+", clearExisting=")+ clearExisting)+", overwriteMatching=")+ overwriteMatching)+", events=")+ events)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

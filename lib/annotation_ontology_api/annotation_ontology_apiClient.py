@@ -39,16 +39,18 @@ class annotation_ontology_api(object):
         :param params: instance of type "GetAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "query_events" of list of
-           String, parameter "query_genes" of list of String
+           String, parameter "query_genes" of list of String, parameter
+           "standardize_modelseed_ids" of Long
         :returns: instance of type "GetAnnotationOntologyEventsOutput" ->
            structure: parameter "events" of list of type
            "AnnotationOntologyEvent" -> structure: parameter "event_id" of
-           String, parameter "ontology_id" of String, parameter "method" of
-           String, parameter "method_version" of String, parameter
-           "timestamp" of String, parameter "ontology_terms" of mapping from
-           String to list of type "AnnotationOntologyTerm" (Insert your
-           typespec information here.) -> structure: parameter "term" of
-           String, parameter "modelseed_id" of String, parameter "evidence"
+           String, parameter "description" of String, parameter "ontology_id"
+           of String, parameter "method" of String, parameter
+           "method_version" of String, parameter "timestamp" of String,
+           parameter "feature_types" of mapping from String to String,
+           parameter "ontology_terms" of mapping from String to list of type
+           "AnnotationOntologyTerm" -> structure: parameter "term" of String,
+           parameter "modelseed_ids" of list of String, parameter "evidence"
            of String
         """
         return self._client.call_method(
@@ -61,20 +63,32 @@ class annotation_ontology_api(object):
         :param params: instance of type "AddAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "output_name" of String,
-           parameter "output_workspace" of String, parameter "events" of list
-           of type "AnnotationOntologyEvent" -> structure: parameter
-           "event_id" of String, parameter "ontology_id" of String, parameter
-           "method" of String, parameter "method_version" of String,
-           parameter "timestamp" of String, parameter "ontology_terms" of
-           mapping from String to list of type "AnnotationOntologyTerm"
-           (Insert your typespec information here.) -> structure: parameter
-           "term" of String, parameter "modelseed_id" of String, parameter
+           parameter "output_workspace" of String, parameter "clear_existing"
+           of Long, parameter "overwrite_matching" of Long, parameter
+           "events" of list of type "AnnotationOntologyEvent" -> structure:
+           parameter "event_id" of String, parameter "description" of String,
+           parameter "ontology_id" of String, parameter "method" of String,
+           parameter "method_version" of String, parameter "timestamp" of
+           String, parameter "feature_types" of mapping from String to
+           String, parameter "ontology_terms" of mapping from String to list
+           of type "AnnotationOntologyTerm" -> structure: parameter "term" of
+           String, parameter "modelseed_ids" of list of String, parameter
            "evidence" of String
         :returns: instance of type "AddAnnotationOntologyEventsOutput" ->
            structure: parameter "output_ref" of String
         """
         return self._client.call_method(
             'annotation_ontology_api.add_annotation_ontology_events',
+            [params], self._service_ver, context)
+
+    def svradmin(self, params, context=None):
+        """
+        Admin function for use in debugging
+        :param params: instance of unspecified object
+        :returns: instance of unspecified object
+        """
+        return self._client.call_method(
+            'annotation_ontology_api.svradmin',
             [params], self._service_ver, context)
 
     def status(self, context=None):
