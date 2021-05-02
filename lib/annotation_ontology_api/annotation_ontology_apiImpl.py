@@ -33,7 +33,7 @@ class annotation_ontology_api:
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
-        if "get_cache" in params and params["get_cache"] == 1:
+        if self.config['ctx']["user_id"] == "chenry" and "get_cache" in params and params["get_cache"] == 1:
             headers = {'Content-Type': 'application/json', 'Authorization': self.config['ctx']["token"]}
             endpoint = self.caching_service_url + '/cache_id'
             resp_json = requests.post(endpoint, data=json.dumps({"service":"annotation_ontology_api","user":self.config['ctx']["user_id"]}), headers=headers).json()
@@ -45,7 +45,7 @@ class annotation_ontology_api:
                 return json.loads(resp.text)
             else:
                 return {"data":'cache does not exist'}
-        if self.config["cache"] == "1":
+        if self.config['ctx']["user_id"] == "chenry" and self.config["cache"] == "1":
             headers = {'Content-Type': 'application/json', 'Authorization': self.config['ctx']["token"]}
             endpoint = self.caching_service_url + '/cache_id'
             resp_json = requests.post(endpoint, data=json.dumps({"service":"annotation_ontology_api","user":self.config['ctx']["user_id"]}), headers=headers).json()
