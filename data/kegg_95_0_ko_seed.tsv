@@ -856,8 +856,8 @@ K08262	rxn06955	acyl-lipid delta12-acetylenase [EC:1.14.19.39]	R05740
 K09590	rxn39810;rxn39809;rxn39808;rxn39812;rxn07283;rxn07284;rxn07289;rxn07290;rxn07288;rxn40412;rxn39811	brassinosteroid-6-oxidase 1 [EC:1.14.-.-]	R07455;R07458;R07457;R07451;R07450;R10669
 K08260	rxn03541	adenosylcobinamide hydrolase [EC:3.5.1.90]	R05226
 K09591	rxn07273;rxn07280	steroid 5-alpha-reductase [EC:1.3.1.22]	R07447;R07429
-K08265	rxn03126	heterodisulfide reductase subunit E [EC:1.8.98.1]	R04540
-K08264	rxn03126	heterodisulfide reductase subunit D [EC:1.8.98.1]	R04540
+K08265	rxn10557	heterodisulfide reductase subunit E [EC:1.8.98.1]	R04540
+K08264	rxn10557	heterodisulfide reductase subunit D [EC:1.8.98.1]	R04540
 K09589	rxn07282;rxn07277	steroid 3-oxidase [EC:1.14.-.-]	R07444;R07449
 K09587	rxn07274;rxn07286;rxn07278;rxn07287;rxn07285	steroid 22-alpha-hydroxylase [EC:1.14.13.-]	R07454;R07453;R07430;R07452;R07445
 K09588	rxn07279	cytochrome P450 family 90 subfamily A polypeptide 1 [EC:1.14.-.-]	R07446
@@ -2610,15 +2610,15 @@ K03434	rxn39529	N-acetylglucosaminylphosphatidylinositol deacetylase [EC:3.5.1.8
 K03431	rxn01485	phosphoglucosamine mutase [EC:5.4.2.10]	R02060
 K03430	rxn02900	2-aminoethylphosphonate-pyruvate transaminase [EC:2.6.1.37]	R04152
 K04765	rxn02154;rxn02176;rxn00301;rxn00514;rxn00062;rxn00212;rxn00367;rxn00063;rxn00076;rxn00463	nucleoside triphosphate diphosphatase [EC:3.6.1.9]	R00086;R11323;R00087;R03004;R00287;R03036;R00662;R00103;R00720;R00426;R00515
-K14068	rxn15961	methanophenazine hydrogenase, large subunit [EC:1.12.98.3]	R09095
-K14069	rxn15961	methanophenazine hydrogenase, cytochrome b subunit [EC:1.12.98.3]	R09095
+K14068	rxn10517	methanophenazine hydrogenase, large subunit [EC:1.12.98.3]	R09095
+K14069	rxn10517	methanophenazine hydrogenase, cytochrome b subunit [EC:1.12.98.3]	R09095
 K14066	rxn01213	geranyl diphosphate synthase [EC:2.5.1.1]	R01658
 K15397	rxn16256	3-ketoacyl-CoA synthase [EC:2.3.1.199]	R10825;R09419
 K14067	rxn00934	malate-CoA ligase subunit beta [EC:6.2.1.9]	R01256
 K15398	rxn16289	fatty acid omega-hydroxylase [EC:1.14.-.-]	R09451
 K14073	rxn15315;rxn06217;rxn39352	pancreatic triacylglycerol lipase [EC:3.1.1.3]	R02250;R02687
 K14074	rxn15315;rxn06217;rxn39352	pancreatic lipase-related protein 1 [EC:3.1.1.3]	R02250;R02687
-K14070	rxn15961	methanophenazine hydrogenase [EC:1.12.98.3]	R09095
+K14070	rxn10517	methanophenazine hydrogenase [EC:1.12.98.3]	R09095
 K14075	rxn15315;rxn06217;rxn39352	pancreatic lipase-related protein 2 [EC:3.1.1.3]	R02250;R02687
 K14076	rxn15315;rxn06217;rxn39352	pancreatic lipase-related protein 3 [EC:3.1.1.3]	R02250;R02687
 K14084	rxn10613	trimethylamine corrinoid protein	R09124
@@ -4734,3 +4734,22 @@ K01813	rxn01761;rxn15338;rxn15337	L-rhamnose isomerase [EC:5.3.1.14]	R02437
 K01814	rxn03175	phosphoribosylformimino-5-aminoimidazole carboxamide ribotide isomerase [EC:5.3.1.16]	R04640
 K01812	rxn15293;rxn01080;rxn01457;rxn15213	glucuronate isomerase [EC:5.3.1.12]	R01482;R01983
 K01810	rxn31240;rxn15364;rxn20522;rxn00558;rxn02380;rxn01977	glucose-6-phosphate isomerase [EC:5.3.1.9]	R02739;R03321;R02740;R00771
+K22158	rxn10513	K22158
+K22159	rxn10513	K22159
+K22161	rxn10513	K22161
+K22160	rxn10513	K22160
+K22162	rxn10513	K22162
+K22163	rxn10513	K22163
+K22164	rxn10513	K22164
+K22165	rxn10513	K22165
+K22166	rxn10513	K22166
+K22167	rxn10513	K22167
+K22168	rxn10513	K22168
+K22169	rxn10513	K22169
+K22170	rxn10513	K22170
+K14086	rxn05759	K14086
+K14087	rxn05759	K14087
+K14088	rxn05759	K14088
+K14089	rxn05759	K14089
+K14090	rxn05759	K14090
+K14091	rxn05759	K14091
