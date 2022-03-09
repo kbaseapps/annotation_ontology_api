@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from wsgiref.simple_server import make_server
 import sys
 import json
@@ -16,7 +17,7 @@ from biokbase import log
 import requests as _requests
 import random as _random
 import os
-from annotation_ontology_api.authclient import KBaseAuth as _KBaseAuth
+from .authclient import KBaseAuth as _KBaseAuth
 
 DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'

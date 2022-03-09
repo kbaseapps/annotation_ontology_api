@@ -11,6 +11,7 @@ MAINTAINER KBase Developer
 # Here we install a python coverage tool and an
 # https library that is out of date in the base image.
 
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install coverage
 
 # update security libraries in the base image
