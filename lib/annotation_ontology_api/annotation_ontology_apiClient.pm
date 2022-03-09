@@ -178,7 +178,7 @@ AnnotationOntologyTerm is a reference to a hash where the following keys are def
 
 =item Description
 
-Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data
+Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data.
 
 =back
 
@@ -306,7 +306,7 @@ AddAnnotationOntologyEventsOutput is a reference to a hash where the following k
 
 =item Description
 
-Adds a new annotation ontology event to a genome or AMA
+Adds a new annotation ontology event to a genome or AMA.
 
 =back
 

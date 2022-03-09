@@ -6,6 +6,7 @@ import time
 import requests
 
 from os import environ
+
 try:
     from ConfigParser import ConfigParser  # py2
 except:
@@ -76,14 +77,32 @@ class annotation_ontology_apiTest(unittest.TestCase):
         return self.__class__.ctx
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_your_method(self):
+    def test_empty_genome(self):
         # Prepare test objects in workspace if needed using
         # self.getWsClient().save_objects({'workspace': self.getWsName(),
         #                                  'objects': []})
         #
         # Run your method by
-        # ret = self.getImpl().your_method(self.getContext(), parameters...)
+        public_genome = "45053/16/1"
+        parameters = {
+            "input_ref": public_genome,
+            "input_workspace": self.getWsName()
+        }
+        expected_output = [{'events': [{'description': 'GenomeFileUtils Genbank uploader from '
+                                                       'annotations:0.11.2:GO:2021_01_28_17_24_10',
+                                        'event_id': 'GenomeFileUtils Genbank uploader from '
+                                                    'annotations:0.11.2:GO:2021_01_28_17_24_10',
+                                        'method': 'GenomeFileUtils Genbank uploader from annotations',
+                                        'method_version': '0.11.2',
+                                        'ontology_id': 'GO',
+                                        'ontology_terms': {},
+                                        'original_description': None,
+                                        'timestamp': '2021_01_28_17_24_10'}],
+                            'feature_types': {}}]
+
+        ret = self.getImpl().get_annotation_ontology_events(self.getContext(), parameters)
         #
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
-        pass
+        self.assertEqual(ret,expected_output)
+

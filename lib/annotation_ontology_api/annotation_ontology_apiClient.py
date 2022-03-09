@@ -12,7 +12,7 @@ from __future__ import print_function
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
     from baseclient import BaseClient as _BaseClient  # @Reimport
 
@@ -23,7 +23,7 @@ class annotation_ontology_api(object):
             self, url=None, timeout=30 * 60, user_id=None,
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
-            auth_svc='https://kbase.us/services/authorization/Sessions/Login'):
+            auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login'):
         if url is None:
             raise ValueError('A url is required')
         self._service_ver = None
@@ -35,7 +35,7 @@ class annotation_ontology_api(object):
 
     def get_annotation_ontology_events(self, params, context=None):
         """
-        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data
+        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data.
         :param params: instance of type "GetAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "query_events" of list of
@@ -53,13 +53,12 @@ class annotation_ontology_api(object):
            parameter "modelseed_ids" of list of String, parameter "evidence"
            of String
         """
-        return self._client.call_method(
-            'annotation_ontology_api.get_annotation_ontology_events',
-            [params], self._service_ver, context)
+        return self._client.call_method('annotation_ontology_api.get_annotation_ontology_events',
+                                        [params], self._service_ver, context)
 
     def add_annotation_ontology_events(self, params, context=None):
         """
-        Adds a new annotation ontology event to a genome or AMA
+        Adds a new annotation ontology event to a genome or AMA.
         :param params: instance of type "AddAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "output_name" of String,
@@ -77,9 +76,8 @@ class annotation_ontology_api(object):
         :returns: instance of type "AddAnnotationOntologyEventsOutput" ->
            structure: parameter "output_ref" of String
         """
-        return self._client.call_method(
-            'annotation_ontology_api.add_annotation_ontology_events',
-            [params], self._service_ver, context)
+        return self._client.call_method('annotation_ontology_api.add_annotation_ontology_events',
+                                        [params], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('annotation_ontology_api.status',

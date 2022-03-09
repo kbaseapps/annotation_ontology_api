@@ -33,7 +33,7 @@ module annotation_ontology_api {
     } GetAnnotationOntologyEventsOutput;
     
     /*
-        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data
+        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data.
     */
     funcdef get_annotation_ontology_events(GetAnnotationOntologyEventsParams params) returns (GetAnnotationOntologyEventsOutput output) authentication optional;
 	
@@ -52,7 +52,7 @@ module annotation_ontology_api {
     } AddAnnotationOntologyEventsOutput;
     
     /*
-        Adds a new annotation ontology event to a genome or AMA
+        Adds a new annotation ontology event to a genome or AMA.
     */
 	funcdef add_annotation_ontology_events(AddAnnotationOntologyEventsParams params) returns (AddAnnotationOntologyEventsOutput output) authentication optional;
 	    

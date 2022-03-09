@@ -6,11 +6,12 @@ MAINTAINER KBase Developer
 # install line here, a git checkout to download code, or run any other
 # installation scripts.
 
-# RUN apt-get update
+RUN apt-get update && apt-get upgrade -y
 
 # Here we install a python coverage tool and an
 # https library that is out of date in the base image.
 
+RUN pip install --upgrade pip
 RUN pip install coverage
 
 # update security libraries in the base image
