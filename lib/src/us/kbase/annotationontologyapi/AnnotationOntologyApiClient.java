@@ -165,7 +165,7 @@ public class AnnotationOntologyApiClient {
     /**
      * <p>Original spec-file function name: get_annotation_ontology_events</p>
      * <pre>
-     * Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data
+     * Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data.
      * </pre>
      * @param   params   instance of type {@link us.kbase.annotationontologyapi.GetAnnotationOntologyEventsParams GetAnnotationOntologyEventsParams}
      * @return   parameter "output" of type {@link us.kbase.annotationontologyapi.GetAnnotationOntologyEventsOutput GetAnnotationOntologyEventsOutput}
@@ -183,7 +183,7 @@ public class AnnotationOntologyApiClient {
     /**
      * <p>Original spec-file function name: add_annotation_ontology_events</p>
      * <pre>
-     * Adds a new annotation ontology event to a genome or AMA
+     * Adds a new annotation ontology event to a genome or AMA.
      * </pre>
      * @param   params   instance of type {@link us.kbase.annotationontologyapi.AddAnnotationOntologyEventsParams AddAnnotationOntologyEventsParams}
      * @return   parameter "output" of type {@link us.kbase.annotationontologyapi.AddAnnotationOntologyEventsOutput AddAnnotationOntologyEventsOutput}

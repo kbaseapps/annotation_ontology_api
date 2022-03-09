@@ -5,8 +5,8 @@ import json
 import requests
 from pprint import pformat
 from annotation_ontology_api.annotation_ontology_api import AnnotationOntologyAPI
-from Workspace.WorkspaceClient import Workspace as workspaceService
-from DataFileUtil.DataFileUtilClient import DataFileUtil
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+from installed_clients.DataFileUtilClient import DataFileUtil
 # silence whining
 requests.packages.urllib3.disable_warnings()
 #END_HEADER
@@ -28,8 +28,8 @@ class annotation_ontology_api:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = "https://github.com/kbaseapps/annotation_ontology_api.git"
-    GIT_COMMIT_HASH = "3806d786ab9b32ac28574938fe9904a117835421"
+    GIT_URL = "https://github.com/kbaseapps/annotation_ontology_api"
+    GIT_COMMIT_HASH = "4b3b268524c31446926aa276ff2b09cc9cf99625"
 
     #BEGIN_CLASS_HEADER
     def cache(self,params):
@@ -83,7 +83,7 @@ class annotation_ontology_api:
 
     def get_annotation_ontology_events(self, ctx, params):
         """
-        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data
+        Retrieves annotation ontology events in a standardized form cleaning up inconsistencies in underlying data.
         :param params: instance of type "GetAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "query_events" of list of
@@ -130,7 +130,7 @@ class annotation_ontology_api:
 
     def add_annotation_ontology_events(self, ctx, params):
         """
-        Adds a new annotation ontology event to a genome or AMA
+        Adds a new annotation ontology event to a genome or AMA.
         :param params: instance of type "AddAnnotationOntologyEventsParams"
            -> structure: parameter "input_ref" of String, parameter
            "input_workspace" of String, parameter "output_name" of String,
