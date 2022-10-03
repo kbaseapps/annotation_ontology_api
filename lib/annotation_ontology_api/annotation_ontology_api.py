@@ -90,7 +90,7 @@ class AnnotationOntologyAPI:
                         modelseed = "MSRXN:"+items[0]
                         if modelseed in self.alias_hash["MSRXN"]:
                             modelseed = self.alias_hash["MSRXN"][modelseed][0]
-                        if items[1] not in self.alias_hash["EC"]:
+                        if "EC:"+items[1] not in self.alias_hash["EC"]:
                             self.alias_hash["EC"]["EC:"+items[1]] = []
                         self.alias_hash["EC"]["EC:"+items[1]].append(modelseed)
             elif namespace == "META" or namespace == "RO" or namespace == "BIGG" or namespace == "RHEA":
